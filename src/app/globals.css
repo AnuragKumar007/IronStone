@@ -1,0 +1,370 @@
+@import "tailwindcss";
+
+/* =======================================================
+   IRONSTONE DESIGN SYSTEM — Tailwind v4 Theme Config
+   ⚠️  DO NOT hard-code colors, fonts, or spacing values
+       anywhere in the project. Always use the tokens below.
+   ======================================================= */
+
+@theme inline {
+  /* =======================================================
+     PRIMARY — Brand Red (Energy, CTAs, Accents)
+     Used in: HeroSection, Navbar, Footer, DownloadApp,
+              WorkoutPlans glow, FloatingImagesSection
+     ======================================================= */
+  --color-primary:        #ff0000;   /* brightest red — blob glows, wave borders */
+  --color-primary-vivid:  #ff3333;   /* hover highlight red */
+  --color-primary-mid:    #cc0000;   /* logo gradient mid, hover buttons */
+  --color-primary-dark:   #660000;   /* logo gradient end, deep shadow */
+
+  /* =======================================================
+     SECONDARY — Dark Surfaces (Cards, Panels, Depth)
+     Used in: MembershipSection, ReviewsCarousel, Navbar,
+              DownloadApp glass panel
+     ======================================================= */
+  --color-bg:             #000000;   /* page background */
+  --color-surface-100:    #0d0d0d;   /* Basic/Advance pricing cards */
+  --color-surface-200:    #111111;   /* Pro (featured) pricing card */
+  --color-surface-300:    #1a1a1a;   /* container panels, glass layers */
+
+  /* =======================================================
+     TERTIARY — Muted Grays (Text Hierarchy, Labels)
+     Used in: WorkoutPlans, FloatingImages, HeroSection,
+              Footer, ReviewsCarousel
+     ======================================================= */
+  --color-foreground:     #ffffff;   /* primary headings, labels */
+  --color-muted-bright:   #B5B5B6;   /* WorkoutPlans main heading */
+  --color-muted:          #959597;   /* WorkoutPlans subtitle */
+  --color-muted-dim:      #919399;   /* FloatingImages section subtitle */
+  /* gray-300 (#d1d5db) — review card body text        → use Tailwind: text-gray-300 */
+  /* gray-400 (#9ca3af) — section supporting paragraphs → use Tailwind: text-gray-400 */
+  /* gray-500 (#6b7280) — footer links, timestamps      → use Tailwind: text-gray-500 */
+
+  /* =======================================================
+     ACCENT — Blue-Violet Gradient (Premium / Membership)
+     Used in: .gradient-text, .gradient-border-effect,
+              MembershipSection glowing border, CSS utilities
+     ======================================================= */
+  --color-accent-blue:    #A2C7FF;   /* gradient start — soft blue */
+  --color-accent-indigo:  #B0BDFF;   /* gradient mid  — periwinkle */
+  --color-accent-violet:  #D2AEF9;   /* gradient end  — soft violet */
+
+  /* =======================================================
+     TYPOGRAPHY
+     ======================================================= */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* =======================================================
+     SPACING & SHAPE
+     ======================================================= */
+  --spacing-section: 6rem;    /* standard vertical section padding */
+  --radius-card:     1.5rem;  /* rounded-3xl — membership & reach-us cards */
+  --radius-btn:      9999px;  /* rounded-full — CTA buttons */
+  --radius-sm:       0.75rem; /* rounded-xl   — inner buttons like "Start for Free" */
+
+  /* =======================================================
+     TRANSITIONS
+     ======================================================= */
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   500ms;
+}
+
+/* =======================================================
+   BASE STYLES
+   ======================================================= */
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+
+  /* Firefox scrollbar */
+  scrollbar-width: auto;
+  scrollbar-color: var(--color-brand-red) var(--color-background);
+}
+
+/* ── Webkit Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar       { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom,
+    var(--color-brand-red),
+    var(--color-brand-red-mid),
+    var(--color-brand-red-dark)
+  );
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #ff3333, #cc0000, #660000);
+}
+
+/* =======================================================
+   REUSABLE UTILITY CLASSES
+   Always use these — never write raw hex values in tsx.
+   ======================================================= */
+
+/* ── Gradient text — cool accent ────────────────────── */
+.gradient-text,
+.text-gradient-primary {
+  background: linear-gradient(to bottom right,
+    var(--color-accent-blue),
+    var(--color-accent-indigo),
+    var(--color-accent-violet)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Glowing gradient border (hover effect) ─────────── */
+.gradient-border-effect {
+  position: relative;
+}
+.gradient-border-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  padding: 2px;
+  background: linear-gradient(to top left,
+    var(--color-accent-blue),
+    var(--color-accent-indigo),
+    var(--color-accent-violet)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--duration-normal) ease;
+}
+.gradient-border-effect:hover::before {
+  opacity: 1;
+  animation: borderAnimation 3s linear infinite;
+  background-size: 200% 200%;
+}
+
+/* ── Card hover lift ────────────────────────────────── */
+.card-hover {
+  transition: transform var(--duration-normal) ease,
+              box-shadow var(--duration-normal) ease;
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Review card (alias for card-hover) ─────────────── */
+.review-card {
+  transition: all var(--duration-normal) ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.review-card:hover {
+  transform: translateY(-5px) rotate(0deg);
+}
+
+/* =======================================================
+   SECTION SPECIFIC UTILITIES
+   ======================================================= */
+
+/* Define Your Goals — large reactive text */
+.text-area {
+  letter-spacing: normal;
+  position: relative;
+  pointer-events: none;
+  font-size: 10rem;
+  font-weight: bold;
+  transition: transform 0.1s ease-out;
+  transform-origin: center center;
+}
+
+/* Spotlight cursor effect */
+.spotlight {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  background: none;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.two {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 3D perspective helper */
+.perspective-1000 {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* =======================================================
+   ANIMATIONS
+   ======================================================= */
+
+/* Glowing border animation */
+@keyframes borderAnimation {
+  0%   { background-position: 0% 100%; }
+  50%  { background-position: 100% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Reach Us / Wave pulse animation */
+@keyframes waveAnimation {
+  0%   { transform: scale(0); opacity: 1; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.wave-1 { animation: waveAnimation 3s infinite; }
+.wave-2 { animation: waveAnimation 3s infinite; animation-delay: 1s; }
+.wave-3 { animation: waveAnimation 3s infinite; animation-delay: 2s; }
+
+/* =======================================================
+   AUTH PAGE UTILITIES
+   ======================================================= */
+
+/* ── Input field — dark style with red focus ring ────── */
+.auth-input {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-surface-300);
+  border: 1.5px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--duration-normal) ease,
+              box-shadow var(--duration-normal) ease;
+}
+.auth-input::placeholder {
+  color: #666;
+}
+.auth-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* ── Primary CTA button — red gradient ───────────────── */
+.auth-btn-primary {
+  width: 100%;
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: white;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--duration-normal) ease,
+              box-shadow var(--duration-normal) ease;
+}
+.auth-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+}
+.auth-btn-primary:active {
+  transform: translateY(0);
+}
+.auth-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Google SSO button ───────────────────────────────── */
+.auth-btn-google {
+  width: 100%;
+  padding: 0.75rem 2rem;
+  background: var(--color-surface-300);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1.5px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: background var(--duration-normal) ease,
+              border-color var(--duration-normal) ease;
+}
+.auth-btn-google:hover {
+  background: var(--color-surface-200);
+  border-color: #444;
+}
+
+/* ── Spark animation for muscle character ────────────── */
+@keyframes sparkPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.muscle-spark-left,
+.muscle-spark-right {
+  animation: sparkPulse 0.8s ease-in-out infinite;
+}
+.muscle-spark-right {
+  animation-delay: 0.4s;
+}
+
+/* ── Auth divider ────────────────────────────────────── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #2a2a2a;
+}
+
+/* ── Password toggle button ──────────────────────────── */
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color var(--duration-fast) ease;
+}
+.password-toggle:hover {
+  color: var(--color-foreground);
+}
+
+/* ── Gallery fade-in animation ──────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
