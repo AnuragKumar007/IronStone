@@ -6,7 +6,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
-import MuscleMan from "@/components/auth/MuscleMan";
+import MuscleMan from "@/components/auth/MuscleMan2";
 import { signUpWithEmail, signInWithGoogle } from "@/lib/auth";
 
 export default function SignupPage() {

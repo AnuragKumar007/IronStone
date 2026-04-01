@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 const navLinks = [
-  { label: "Home", href: "/" },
+  { label: "Home", href: "/house" },
   { label: "Trainers", href: "/trainers" },
   { label: "Equipment", href: "/equipment" },
   { label: "Gallery", href: "/gallery" },
+  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
 ];
 

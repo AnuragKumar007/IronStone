@@ -6,7 +6,7 @@ import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
-import MuscleMan from "@/components/auth/MuscleMan";
+import MuscleMan from "@/components/auth/MuscleMan2";
 import { signInWithEmail, signInWithGoogle, resetPassword } from "@/lib/auth";
 
 // Wrapper with Suspense for useSearchParams
