@@ -20,7 +20,22 @@
 - Wrapped `setSessionCookie` in try-catch so login doesn't break if admin SDK is unavailable
 - Added debug logging to AuthContext (can be removed later)
 
+### Phase 2 — Design System & Common Components
+- Built 8 UI components in `src/components/ui/`:
+  - `Badge` — status/category pill (success, warning, danger, info, neutral)
+  - `Button` — 4 variants (primary/secondary/outline/ghost), 3 sizes, loading state
+  - `Input` — form input with label, icon, error, uses `.auth-input` CSS
+  - `Card` — 3 variants (default/featured/interactive), 3 padding sizes
+  - `SectionHeader` — page section heading with label, title, subtitle
+  - `Modal` — dialog overlay with GSAP animation, Escape key, scroll lock
+  - `DataTable` — generic data table stub for admin (Phase 6)
+  - `ImageUpload` — drag-and-drop uploader stub for admin (Phase 6)
+- Created barrel export `src/components/ui/index.ts`
+- Created `PageWrapper` shared layout component
+- Moved `Navbar` and `Footer` to `src/components/shared/`
+- Updated all import paths across layouts and pages
+
 ### Status
 - **Phase 1 (Foundation & Auth):** Complete
-- **Phase 2 (Design System & Components):** Not started
+- **Phase 2 (Design System & Components):** Complete
 - **Phase 3 (Content Pages):** Not started

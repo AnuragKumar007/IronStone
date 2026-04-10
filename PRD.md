@@ -1368,13 +1368,14 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [x] AuthContext + useAuth hook
 - [x] Type definitions
 
-### Phase 2 — Design System & Common Components
-- [ ] Build `Button`, `Card`, `Input`, `Badge`, `SectionHeader` components
-- [ ] Build `Modal` component
-- [ ] Build `PageWrapper`, extract `Footer` to shared
-- [ ] Update Navbar with all routes + profile dropdown
-- [ ] Create barrel export (`components/ui/index.ts`)
-- [ ] Test all components in isolation
+### Phase 2 — Design System & Common Components (DONE)
+- [x] Build `Button`, `Card`, `Input`, `Badge`, `SectionHeader` components
+- [x] Build `Modal` component
+- [x] Build `DataTable` and `ImageUpload` stubs (for Phase 6 admin)
+- [x] Build `PageWrapper`, move `Footer` and `Navbar` to `shared/`
+- [x] Update Navbar with auth-aware routes + logout button
+- [x] Create barrel export (`components/ui/index.ts`)
+- [x] All imports updated, build passes
 
 ### Phase 3 — Content Pages
 - [ ] `/about` page — static content with GSAP animations

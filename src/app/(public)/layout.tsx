@@ -1,7 +1,8 @@
 // ============================================
 // Public Layout — with Navbar for content pages
 // ============================================
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/Navbar";
+import PageWrapper from "@/components/shared/PageWrapper";
 
 export default function PublicLayout({
   children,
@@ -11,9 +12,7 @@ export default function PublicLayout({
   return (
     <div className="min-h-screen bg-black">
       <Navbar />
-      <div className="pt-24">
-        {children}
-      </div>
+      <PageWrapper>{children}</PageWrapper>
     </div>
   );
 }

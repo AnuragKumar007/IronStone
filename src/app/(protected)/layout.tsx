@@ -4,7 +4,7 @@
 // ============================================
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/Navbar";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function ProtectedLayout({
