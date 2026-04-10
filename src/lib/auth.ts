@@ -96,10 +96,15 @@ export async function resetPassword(email: string) {
 
 // ── Set Session Cookie ──────────────────────
 async function setSessionCookie(user: User) {
-  const idToken = await user.getIdToken();
-  await fetch("/api/auth/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idToken }),
-  });
+  try {
+    const idToken = await user.getIdToken();
+    await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
+  } catch (error) {
+    // Session cookie is optional — auth still works client-side via Firebase
+    console.warn("Failed to set session cookie:", error);
+  }
 }

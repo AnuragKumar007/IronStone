@@ -66,7 +66,7 @@ function LoginContent() {
 
     try {
       await signInWithEmail(form.email, form.password);
-      router.push(redirectTo);
+      router.replace(redirectTo);
     } catch (err: unknown) {
       const firebaseError = err as { code?: string; message?: string };
       if (
@@ -90,7 +90,7 @@ function LoginContent() {
     setLoading(true);
     try {
       await signInWithGoogle();
-      router.push(redirectTo);
+      router.replace(redirectTo);
     } catch (err: unknown) {
       const firebaseError = err as { message?: string };
       setError(firebaseError.message || "Google sign-in failed.");
