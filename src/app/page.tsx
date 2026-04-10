@@ -1,6 +1,6 @@
 // Home Page
 import LoadingScreen from "@/components/LoadingScreen";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/Navbar";
 import HeroSection from "@/components/HeroSection";
 import WorkoutPlansSection from "@/components/WorkoutPlansSection";
 import DefineGoalsSection from "@/components/DefineGoalsSection";
@@ -10,7 +10,7 @@ import MembershipSection from "@/components/MembershipSection";
 import ReviewsCarousel from "@/components/ReviewsCarousel";
 import FloatingImagesSection from "@/components/FloatingImagesSection";
 import DownloadAppSection from "@/components/DownloadAppSection";
-import Footer from "@/components/Footer";
+import Footer from "@/components/shared/Footer";
 
 export default function Home() {
   return (

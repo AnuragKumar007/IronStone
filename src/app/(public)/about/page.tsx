@@ -5,7 +5,9 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import PageHero from "@/components/PageHero";
+import { Button } from "@/components/ui";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -223,23 +225,19 @@ export default function AboutPage() {
 
         {/* CTA */}
         <div className="text-center">
-          <div className="inline-flex flex-col items-center bg-[#0d0d0d] border border-zinc-800 rounded-3xl p-10 md:p-14 max-w-2xl">
+          <div className="inline-flex flex-col items-center bg-surface-100 border border-zinc-800 rounded-3xl p-10 md:p-14 max-w-2xl">
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
               Ready to Write Your Chapter?
             </h3>
             <p className="text-gray-400 mb-6 max-w-lg">
               Join the IronStone family and start your transformation today.
             </p>
-            <a
-              href="/signup"
-              className="px-8 py-3.5 bg-gradient-to-r from-red-600 to-red-800 text-white
-                         font-bold rounded-xl text-sm uppercase tracking-wider
-                         hover:shadow-lg hover:shadow-red-900/30 transition-all duration-300
-                         hover:-translate-y-1 inline-block"
-            >
-              Join IronStone
-              <i className="ri-arrow-right-line ml-2"></i>
-            </a>
+            <Link href="/signup">
+              <Button variant="primary" size="lg">
+                Join IronStone
+                <i className="ri-arrow-right-line ml-2"></i>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

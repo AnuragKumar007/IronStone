@@ -50,4 +50,15 @@ export interface PricingPlan {
   duration: number; // in days
   features: string[];
   highlighted: boolean;
+  badge?: string; // e.g. "Most Popular", "Best Value"
+}
+
+export interface ContactMessage {
+  id?: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  createdAt: Date;
+  read: boolean;
 }

@@ -1,28 +1,27 @@
 "use client";
 // ============================================
-// Protected Layout — requires authentication
+// Admin Layout — Sidebar + admin-only guard
 // ============================================
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/shared/Navbar";
 import { useAuth } from "@/hooks/useAuth";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
-export default function ProtectedLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
+    if (!loading && (!user || !isAdmin)) {
+      router.replace("/home");
     }
-  }, [user, loading, router]);
+  }, [user, loading, isAdmin, router]);
 
-  // Show spinner while auth is loading or user not yet confirmed
-  if (loading || !user) {
+  if (loading || !user || !isAdmin) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <i className="ri-loader-4-line text-4xl text-red-500 animate-spin"></i>
@@ -31,11 +30,13 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <Navbar />
-      <div className="pt-24">
-        {children}
-      </div>
+    <div className="flex min-h-screen bg-black">
+      <AdminSidebar />
+      <main className="flex-1 overflow-y-auto">
+        <div className="p-6 md:p-8 lg:p-10">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

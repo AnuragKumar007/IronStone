@@ -143,3 +143,4 @@ linear-gradient(to bottom right, #A2C7FF, #B0BDFF, #D2AEF9)
 4. ✅ Always use `text-red-500` or `text-red-600` for accent/highlight text (never `text-orange`, `text-blue`, etc.).
 5. ✅ Always wrap interactive icon buttons with `hover:text-red-500 transition-colors`.
 6. ✅ Always use `font-black` for metric/stat numbers and `font-bold` for headings.
+7. ✅ Always update `CHANGELOG.md` at the end of each working session with a new dated entry summarizing what was done and current phase status.

@@ -28,8 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unsubDoc: (() => void) | undefined;
+
     const unsubAuth = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
+
+      // Clean up previous Firestore listener
+      if (unsubDoc) {
+        unsubDoc();
+        unsubDoc = undefined;
+      }
 
       if (!firebaseUser) {
         setUserData(null);
@@ -38,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Listen to Firestore user document in real-time
-      const unsubDoc = onSnapshot(
+      unsubDoc = onSnapshot(
         doc(db, "users", firebaseUser.uid),
         (snapshot) => {
           if (snapshot.exists()) {
@@ -59,16 +67,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           setLoading(false);
         },
-        () => {
-          // Error handler
+        (error) => {
+          console.error("[AuthContext] Firestore error:", error);
           setLoading(false);
         }
       );
-
-      return () => unsubDoc();
     });
 
-    return () => unsubAuth();
+    return () => {
+      unsubAuth();
+      if (unsubDoc) unsubDoc();
+    };
   }, []);
 
   const isAdmin = userData?.role === "admin";

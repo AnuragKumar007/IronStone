@@ -1368,22 +1368,27 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [x] AuthContext + useAuth hook
 - [x] Type definitions
 
-### Phase 2 — Design System & Common Components
-- [ ] Build `Button`, `Card`, `Input`, `Badge`, `SectionHeader` components
-- [ ] Build `Modal` component
-- [ ] Build `PageWrapper`, extract `Footer` to shared
-- [ ] Update Navbar with all routes + profile dropdown
-- [ ] Create barrel export (`components/ui/index.ts`)
-- [ ] Test all components in isolation
+### Phase 2 — Design System & Common Components (DONE)
+- [x] Build `Button`, `Card`, `Input`, `Badge`, `SectionHeader` components
+- [x] Build `Modal` component
+- [x] Build `DataTable` and `ImageUpload` stubs (for Phase 6 admin)
+- [x] Build `PageWrapper`, move `Footer` and `Navbar` to `shared/`
+- [x] Update Navbar with auth-aware routes + logout button
+- [x] Create barrel export (`components/ui/index.ts`)
+- [x] All imports updated, build passes
 
-### Phase 3 — Content Pages
-- [ ] `/about` page — static content with GSAP animations
-- [ ] `/trainers` page — Firestore fetch, card grid
-- [ ] `/equipment` page — Firestore fetch, category filter, card grid
-- [ ] `/gallery` page — Firestore fetch, masonry grid, lightbox
-- [ ] `/contact` page — form + map + `POST /api/contact`
-- [ ] Add Firestore helper functions in `lib/firestore.ts`
-- [ ] Seed Firestore with sample data for development
+### Phase 3 — Content Pages (DONE — API route pending)
+- [x] `/about` page — refactored CTA with Button component
+- [x] `/trainers` page — Firestore fetch, loading skeletons, Button CTA
+- [x] `/equipment` page — Firestore fetch, Button filters, loading skeletons
+- [x] `/gallery` page — Firestore fetch, Modal lightbox, loading skeletons
+- [x] `/contact` page — form with Input/Button, contact info, map
+- [ ] `POST /api/contact` — server-side route to write contactMessages to Firestore
+- [x] Firestore helper functions in `lib/firestore.ts`
+- [x] Seed script with sample data (`scripts/seed.ts`)
+- [x] Card components updated: TrainerCard, EquipmentCard, GalleryCard (Firestore field names)
+- [x] Pricing page — Firestore fetch, Badge/Button components, kept Razorpay
+- [x] Navbar + Footer updated with Contact link
 
 ### Phase 4 — Payments & Membership
 - [ ] `/pricing` page — Firestore-backed cards + Razorpay checkout
@@ -1399,15 +1404,16 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [ ] Payment confirmation email
 - [ ] Firebase Cloud Function — daily expiry check + reminder email
 
-### Phase 6 — Admin Panel
-- [ ] Admin layout with sidebar
-- [ ] `/admin` dashboard — stats cards, expiring members, recent signups
-- [ ] `/admin/members` — user table with search/filter/actions
-- [ ] `/admin/pricing` — edit plan prices and features
-- [ ] `/admin/trainers` — CRUD with image upload
-- [ ] `/admin/equipment` — CRUD with image upload
-- [ ] `/admin/gallery` — multi-upload, delete
-- [ ] `DataTable` and `ImageUpload` components
+### Phase 6 — Admin Panel (DONE)
+- [x] Admin layout with sidebar + isAdmin guard
+- [x] `/admin` dashboard — stats cards, expiring members, recent signups
+- [x] `/admin/members` — user table with search/filter/view/revoke
+- [x] `/admin/pricing` — inline edit plan prices, features, badges
+- [x] `/admin/trainers` — CRUD with image upload + reorder
+- [x] `/admin/equipment` — CRUD with image upload + reorder + categories
+- [x] `/admin/gallery` — upload, inline caption edit, delete
+- [x] Firestore write helpers + Firebase Storage helpers
+- [x] `DataTable` and `ImageUpload` components (enhanced from stubs)
 
 ### Phase 7 — Polish & Launch
 - [ ] GSAP scroll animations on all pages
@@ -1417,6 +1423,7 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [ ] Performance — `next/image` everywhere, lazy loading, bundle analysis
 - [ ] Accessibility audit — contrast, keyboard nav, screen reader
 - [ ] E2E test: signup → purchase → profile → admin → expiry email
+- [ ] Coupon/discount code system — admin creates coupons, users apply at checkout for discounted pricing
 - [ ] Deploy to Vercel (or preferred host)
 
 ---

@@ -1,25 +1,31 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useAuth } from "@/hooks/useAuth";
-import Image from "next/image";
+import { logOut } from "@/lib/auth";
 
-const navLinks = [
-  { label: "Home", href: "/house" },
+const publicLinks = [
   { label: "Trainers", href: "/trainers" },
   { label: "Equipment", href: "/equipment" },
   { label: "Gallery", href: "/gallery" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
   const { user, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logOut();
+    router.push("/");
+  };
 
   useEffect(() => {
     if (!navRef.current) return;
@@ -63,7 +69,16 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
+            {user && (
+              <Link
+                href="/home"
+                className={`font-bold text-sm tracking-widest uppercase transition-colors duration-300
+                  ${pathname === "/home" ? "text-red-500" : "text-white hover:text-red-500"}`}
+              >
+                Home
+              </Link>
+            )}
+            {publicLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -94,15 +109,15 @@ export default function Navbar() {
             {!loading && (
               <>
                 {user ? (
-                  <Link
-                    href="/home"
-                    className="hidden sm:flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-red-600 to-red-800
+                  <button
+                    onClick={handleLogout}
+                    className="hidden sm:flex items-center gap-2 px-5 py-2 border border-zinc-700
                                text-white text-sm font-bold uppercase tracking-wider rounded-full
-                               hover:shadow-lg hover:shadow-red-900/30 transition-all duration-300"
+                               hover:border-red-500 hover:text-red-500 transition-all duration-300"
                   >
-                    <i className="ri-dashboard-line"></i>
-                    Dashboard
-                  </Link>
+                    <i className="ri-logout-box-r-line"></i>
+                    Logout
+                  </button>
                 ) : (
                   <Link
                     href="/login"
@@ -147,7 +162,17 @@ export default function Navbar() {
             ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           <div className="pt-24 px-8 space-y-2">
-            {navLinks.map((link) => (
+            {user && (
+              <Link
+                href="/home"
+                className={`block py-3 text-sm font-bold uppercase tracking-widest transition-colors
+                  ${pathname === "/home" ? "text-red-500" : "text-gray-400 hover:text-white"}`}
+              >
+                <i className="ri-dashboard-line mr-2"></i>
+                Home
+              </Link>
+            )}
+            {publicLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -162,11 +187,11 @@ export default function Navbar() {
               <>
                 {user ? (
                   <Link
-                    href="/home"
-                    className="block py-3 text-sm font-bold uppercase tracking-widest text-red-500"
+                    href="/profile"
+                    className="block py-3 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white"
                   >
-                    <i className="ri-dashboard-line mr-2"></i>
-                    Dashboard
+                    <i className="ri-user-line mr-2"></i>
+                    Profile
                   </Link>
                 ) : (
                   <>
