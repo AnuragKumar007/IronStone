@@ -6,6 +6,7 @@ import { useRef, useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { useAuth } from "@/hooks/useAuth";
+import { Button, Badge } from "@/components/ui";
 
 const quickLinks = [
   {
@@ -109,13 +110,11 @@ export default function HomePage() {
             </p>
           </div>
           {isAdmin && (
-            <Link
-              href="/admin"
-              className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl
-                         hover:shadow-lg hover:shadow-red-900/30 transition-all text-sm font-semibold uppercase tracking-wider"
-            >
-              <i className="ri-admin-line mr-2"></i>
-              Admin Panel
+            <Link href="/admin">
+              <Button variant="primary">
+                <i className="ri-admin-line mr-1"></i>
+                Admin Panel
+              </Button>
             </Link>
           )}
         </div>
@@ -140,10 +139,10 @@ export default function HomePage() {
               {userData?.membershipPlan ? (
                 <>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-900/40 border border-green-700 text-green-400 text-xs font-bold uppercase rounded-full">
-                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <Badge variant="success" size="md">
+                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-1.5"></span>
                       Active
-                    </span>
+                    </Badge>
                     <span className="text-white font-bold text-lg capitalize">
                       {userData.membershipPlan} Plan
                     </span>
@@ -176,14 +175,11 @@ export default function HomePage() {
                 </>
               )}
             </div>
-            <Link
-              href="/pricing"
-              className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white font-bold
-                         rounded-xl hover:shadow-lg hover:shadow-red-900/30 transition-all
-                         text-sm uppercase tracking-wider whitespace-nowrap"
-            >
-              {userData?.membershipPlan ? "Renew Plan" : "Get Started"}
-              <i className="ri-arrow-right-line ml-2"></i>
+            <Link href="/pricing">
+              <Button variant="primary">
+                {userData?.membershipPlan ? "Renew Plan" : "Get Started"}
+                <i className="ri-arrow-right-line ml-1"></i>
+              </Button>
             </Link>
           </div>
         </div>
