@@ -48,8 +48,24 @@
 - Updated Navbar + Footer with Contact link
 - Added `ContactMessage` type and `badge` field to `PricingPlan` type
 
+### Phase 6 — Admin Panel
+- Created admin layout with collapsible sidebar and isAdmin guard (`src/app/admin/layout.tsx`)
+- Built AdminSidebar component with mobile drawer, active state, logout
+- Created Firebase Storage helpers (`src/lib/storage.ts`) — uploadImage, deleteImage
+- Extended Firestore helpers with full CRUD: getUsers, updateUserMembership, add/update/delete for trainers, equipment, gallery, pricing
+- Built Dashboard page — 4 stat cards, expiring members table, recent signups table
+- Built Members page — search, filter (all/active/expired/noPlan), view details modal, revoke membership
+- Built Pricing page — inline editable cards with save per plan
+- Built Trainers page — full CRUD, photo upload to Storage, up/down reorder
+- Built Equipment page — full CRUD, image upload, category dropdown, reorder
+- Built Gallery page — image upload, inline caption editing, delete with Storage cleanup
+- Created TrainerForm and EquipmentForm reusable admin components
+- Fixed DataTable generic types for admin usage
+
 ### Status
 - **Phase 1 (Foundation & Auth):** Complete
 - **Phase 2 (Design System & Components):** Complete
 - **Phase 3 (Content Pages):** Complete (contact API route pending)
-- **Phase 4 (Payments & Membership):** Not started
+- **Phase 4 (Payments & Membership):** Skipped for now
+- **Phase 5 (Email Notifications):** Skipped for now
+- **Phase 6 (Admin Panel):** Complete

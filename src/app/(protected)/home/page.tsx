@@ -3,11 +3,9 @@
 // App Homepage — Post-Login Dashboard
 // ============================================
 import { useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
 import { useAuth } from "@/hooks/useAuth";
-import { logOut } from "@/lib/auth";
 
 const quickLinks = [
   {
@@ -55,8 +53,7 @@ const quickLinks = [
 ];
 
 export default function HomePage() {
-  const { userData, loading } = useAuth();
-  const router = useRouter();
+  const { userData, loading, isAdmin } = useAuth();
   const greetRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const membershipRef = useRef<HTMLDivElement>(null);
@@ -72,11 +69,6 @@ export default function HomePage() {
       .to(membershipRef.current, { opacity: 1, y: 0, duration: 0.6 }, "-=0.4")
       .to(cardsRef.current, { opacity: 1, y: 0, duration: 0.7 }, "-=0.3");
   }, [loading]);
-
-  const handleLogout = async () => {
-    await logOut();
-    router.push("/");
-  };
 
   // Calculate days remaining
   const daysRemaining = userData?.membershipExpiry
@@ -116,14 +108,16 @@ export default function HomePage() {
               Ready to crush your goals today? 💪
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-5 py-2.5 border border-gray-700 text-gray-400 rounded-xl
-                       hover:border-red-600 hover:text-red-500 transition-all text-sm font-semibold uppercase tracking-wider"
-          >
-            <i className="ri-logout-box-r-line mr-2"></i>
-            Logout
-          </button>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-xl
+                         hover:shadow-lg hover:shadow-red-900/30 transition-all text-sm font-semibold uppercase tracking-wider"
+            >
+              <i className="ri-admin-line mr-2"></i>
+              Admin Panel
+            </Link>
+          )}
         </div>
       </div>
 

@@ -27,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
-            className={`auth-input ${icon ? "pl-11" : ""} ${error ? "!border-red-500" : ""} ${className}`}
+            className={`auth-input ${icon ? "!pl-10" : ""} ${error ? "!border-red-500" : ""} ${className}`}
             {...props}
           />
         </div>

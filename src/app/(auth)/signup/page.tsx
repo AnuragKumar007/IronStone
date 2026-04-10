@@ -8,6 +8,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import MuscleMan from "@/components/auth/MuscleMan2";
 import { signUpWithEmail, signInWithGoogle } from "@/lib/auth";
+import { Input, Button } from "@/components/ui";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -154,112 +155,79 @@ export default function SignupPage() {
           )}
 
           {/* Username */}
-          <div>
-            <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
-              Username
-            </label>
-            <div className="relative">
-              <i className="ri-user-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-              <input
-                id="signup-username"
-                type="text"
-                name="username"
-                placeholder="Choose a username"
-                value={form.username}
-                onChange={handleChange}
-                className="auth-input pl-11"
-                required
-              />
-            </div>
-          </div>
+          <Input
+            label="Username"
+            icon="ri-user-line"
+            id="signup-username"
+            type="text"
+            name="username"
+            placeholder="Choose a username"
+            value={form.username}
+            onChange={handleChange}
+            required
+          />
 
           {/* Email */}
-          <div>
-            <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
-              Email
-            </label>
-            <div className="relative">
-              <i className="ri-mail-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-              <input
-                id="signup-email"
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                value={form.email}
-                onChange={handleChange}
-                className="auth-input pl-11"
-                required
-              />
-            </div>
-          </div>
+          <Input
+            label="Email"
+            icon="ri-mail-line"
+            id="signup-email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
 
           {/* Phone */}
-          <div>
-            <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
-              Phone Number
-            </label>
-            <div className="relative">
-              <i className="ri-phone-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-              <input
-                id="signup-phone"
-                type="tel"
-                name="phone"
-                placeholder="+91 XXXXX XXXXX"
-                value={form.phone}
-                onChange={handleChange}
-                className="auth-input pl-11"
-                required
-              />
-            </div>
-          </div>
+          <Input
+            label="Phone Number"
+            icon="ri-phone-line"
+            id="signup-phone"
+            type="tel"
+            name="phone"
+            placeholder="+91 XXXXX XXXXX"
+            value={form.phone}
+            onChange={handleChange}
+            required
+          />
 
           {/* Password */}
-          <div>
-            <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <i className="ri-lock-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-              <input
-                id="signup-password"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Create a strong password"
-                value={form.password}
-                onChange={handleChange}
-                className="auth-input pl-11 pr-12"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="password-toggle"
-                aria-label="Toggle password visibility"
-              >
-                <i className={showPassword ? "ri-eye-off-line" : "ri-eye-line"} />
-              </button>
-            </div>
+          <div className="relative">
+            <Input
+              label="Password"
+              icon="ri-lock-line"
+              id="signup-password"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Create a strong password"
+              value={form.password}
+              onChange={handleChange}
+              className="!pr-12"
+              required
+              minLength={6}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 bottom-3 text-gray-500 hover:text-white transition-colors"
+              aria-label="Toggle password visibility"
+            >
+              <i className={showPassword ? "ri-eye-off-line" : "ri-eye-line"} />
+            </button>
           </div>
 
           {/* Submit Button */}
-          <button
-            id="signup-submit"
+          <Button
             type="submit"
-            disabled={loading}
-            className="auth-btn-primary"
+            variant="primary"
+            size="lg"
+            fullWidth
+            loading={loading}
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <i className="ri-loader-4-line animate-spin"></i>
-                Creating account...
-              </span>
-            ) : progress >= 1 ? (
-              "Let's Roll! 💪"
-            ) : (
-              "Sign Up"
-            )}
-          </button>
+            {progress >= 1 ? "Let's Roll! 💪" : "Sign Up"}
+          </Button>
 
           {/* Divider */}
           <div className="auth-divider">

@@ -2,13 +2,15 @@
 // DataTable — Basic data table for admin pages
 // ============================================
 
-export interface Column<T> {
-  key: keyof T & string;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Column<T = any> {
+  key: string;
   header: string;
-  render?: (value: T[keyof T], row: T) => React.ReactNode;
+  render?: (value: any, row: T) => React.ReactNode;
 }
 
-export interface DataTableProps<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface DataTableProps<T = any> {
   columns: Column<T>[];
   data: T[];
   loading?: boolean;
@@ -17,7 +19,8 @@ export interface DataTableProps<T> {
   className?: string;
 }
 
-export default function DataTable<T extends Record<string, unknown>>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function DataTable<T extends Record<string, any>>({
   columns,
   data,
   loading = false,

@@ -1404,15 +1404,16 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [ ] Payment confirmation email
 - [ ] Firebase Cloud Function — daily expiry check + reminder email
 
-### Phase 6 — Admin Panel
-- [ ] Admin layout with sidebar
-- [ ] `/admin` dashboard — stats cards, expiring members, recent signups
-- [ ] `/admin/members` — user table with search/filter/actions
-- [ ] `/admin/pricing` — edit plan prices and features
-- [ ] `/admin/trainers` — CRUD with image upload
-- [ ] `/admin/equipment` — CRUD with image upload
-- [ ] `/admin/gallery` — multi-upload, delete
-- [ ] `DataTable` and `ImageUpload` components
+### Phase 6 — Admin Panel (DONE)
+- [x] Admin layout with sidebar + isAdmin guard
+- [x] `/admin` dashboard — stats cards, expiring members, recent signups
+- [x] `/admin/members` — user table with search/filter/view/revoke
+- [x] `/admin/pricing` — inline edit plan prices, features, badges
+- [x] `/admin/trainers` — CRUD with image upload + reorder
+- [x] `/admin/equipment` — CRUD with image upload + reorder + categories
+- [x] `/admin/gallery` — upload, inline caption edit, delete
+- [x] Firestore write helpers + Firebase Storage helpers
+- [x] `DataTable` and `ImageUpload` components (enhanced from stubs)
 
 ### Phase 7 — Polish & Launch
 - [ ] GSAP scroll animations on all pages
@@ -1422,6 +1423,7 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [ ] Performance — `next/image` everywhere, lazy loading, bundle analysis
 - [ ] Accessibility audit — contrast, keyboard nav, screen reader
 - [ ] E2E test: signup → purchase → profile → admin → expiry email
+- [ ] Coupon/discount code system — admin creates coupons, users apply at checkout for discounted pricing
 - [ ] Deploy to Vercel (or preferred host)
 
 ---
