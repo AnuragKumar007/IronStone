@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
 import { useAuth } from "@/hooks/useAuth";
+import { Button, Badge, Card } from "@/components/ui";
 
 export default function ProfilePage() {
   return (
@@ -97,14 +98,11 @@ function ProfileContent() {
           <p className="text-gray-500 mb-8">
             Log in to access your membership details, track your progress, and manage your account.
           </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-red-600 to-red-800 text-white
-                       font-bold rounded-xl text-sm uppercase tracking-wider
-                       hover:shadow-lg hover:shadow-red-900/30 transition-all duration-300"
-          >
-            <i className="ri-login-box-line"></i>
-            Login
+          <Link href="/login">
+            <Button variant="primary" size="lg">
+              <i className="ri-login-box-line"></i>
+              Login
+            </Button>
           </Link>
         </div>
       </div>
@@ -155,7 +153,7 @@ function ProfileContent() {
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
           Membership
         </h2>
-        <div className="relative overflow-hidden rounded-3xl bg-[#0d0d0d] border border-zinc-800 p-8 md:p-10">
+        <Card variant="default" padding="lg" className="relative overflow-hidden">
           {/* Background glow */}
           <div
             className="absolute top-0 right-0 w-72 h-72 pointer-events-none"
@@ -173,10 +171,10 @@ function ProfileContent() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-900/40 border border-green-700 text-green-400 text-xs font-bold uppercase rounded-full">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                      <Badge variant="success" size="md">
+                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-1.5"></span>
                         Active
-                      </span>
+                      </Badge>
                       <span className="text-white font-bold text-xl capitalize">
                         {userData.membershipPlan} Plan
                       </span>
@@ -187,13 +185,10 @@ function ProfileContent() {
                       </p>
                     )}
                   </div>
-                  <Link
-                    href="/pricing"
-                    className="px-6 py-3 bg-zinc-900 border border-zinc-700 text-white font-bold
-                               rounded-xl hover:border-red-600 hover:text-red-500 transition-all
-                               text-sm uppercase tracking-wider whitespace-nowrap text-center"
-                  >
-                    Renew / Upgrade
+                  <Link href="/pricing">
+                    <Button variant="outline">
+                      Renew / Upgrade
+                    </Button>
                   </Link>
                 </div>
 
@@ -272,19 +267,16 @@ function ProfileContent() {
                 <p className="text-gray-500 mb-6 max-w-md mx-auto">
                   Choose a plan to unlock full gym access, personal training sessions, and more.
                 </p>
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-red-600 to-red-800 text-white
-                             font-bold rounded-xl text-sm uppercase tracking-wider
-                             hover:shadow-lg hover:shadow-red-900/30 transition-all duration-300"
-                >
-                  View Plans
-                  <i className="ri-arrow-right-line"></i>
+                <Link href="/pricing">
+                  <Button variant="primary" size="lg">
+                    View Plans
+                    <i className="ri-arrow-right-line ml-1"></i>
+                  </Button>
                 </Link>
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Account Details */}
@@ -292,7 +284,7 @@ function ProfileContent() {
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">
           Account Details
         </h2>
-        <div className="bg-[#0d0d0d] border border-zinc-800 rounded-3xl overflow-hidden">
+        <Card variant="default" padding="sm" className="overflow-hidden !p-0">
           {[
             { icon: "ri-user-line", label: "Name", value: userData?.name },
             { icon: "ri-mail-line", label: "Email", value: userData?.email },
@@ -324,7 +316,7 @@ function ProfileContent() {
               </div>
             </div>
           ))}
-        </div>
+        </Card>
       </div>
     </div>
   );
