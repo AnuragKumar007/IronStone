@@ -12,6 +12,7 @@ const publicLinks = [
   { label: "Gallery", href: "/gallery" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {

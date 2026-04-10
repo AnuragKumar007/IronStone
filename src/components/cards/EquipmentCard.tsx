@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 interface EquipmentCardProps {
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   category: string;
   index?: number;
 }
@@ -19,7 +19,7 @@ interface EquipmentCardProps {
 export default function EquipmentCard({
   name,
   description,
-  image,
+  imageUrl,
   category,
   index = 0,
 }: EquipmentCardProps) {
@@ -59,7 +59,7 @@ export default function EquipmentCard({
       {/* Image */}
       <div className="relative h-56 overflow-hidden">
         <img
-          src={image}
+          src={imageUrl}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-700
                      group-hover:scale-105"

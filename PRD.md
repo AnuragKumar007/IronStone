@@ -1377,14 +1377,18 @@ These are safe to expose (prefixed with `NEXT_PUBLIC_`):
 - [x] Create barrel export (`components/ui/index.ts`)
 - [x] All imports updated, build passes
 
-### Phase 3 — Content Pages
-- [ ] `/about` page — static content with GSAP animations
-- [ ] `/trainers` page — Firestore fetch, card grid
-- [ ] `/equipment` page — Firestore fetch, category filter, card grid
-- [ ] `/gallery` page — Firestore fetch, masonry grid, lightbox
-- [ ] `/contact` page — form + map + `POST /api/contact`
-- [ ] Add Firestore helper functions in `lib/firestore.ts`
-- [ ] Seed Firestore with sample data for development
+### Phase 3 — Content Pages (DONE — API route pending)
+- [x] `/about` page — refactored CTA with Button component
+- [x] `/trainers` page — Firestore fetch, loading skeletons, Button CTA
+- [x] `/equipment` page — Firestore fetch, Button filters, loading skeletons
+- [x] `/gallery` page — Firestore fetch, Modal lightbox, loading skeletons
+- [x] `/contact` page — form with Input/Button, contact info, map
+- [ ] `POST /api/contact` — server-side route to write contactMessages to Firestore
+- [x] Firestore helper functions in `lib/firestore.ts`
+- [x] Seed script with sample data (`scripts/seed.ts`)
+- [x] Card components updated: TrainerCard, EquipmentCard, GalleryCard (Firestore field names)
+- [x] Pricing page — Firestore fetch, Badge/Button components, kept Razorpay
+- [x] Navbar + Footer updated with Contact link
 
 ### Phase 4 — Payments & Membership
 - [ ] `/pricing` page — Firestore-backed cards + Razorpay checkout

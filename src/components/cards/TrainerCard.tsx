@@ -12,7 +12,7 @@ interface TrainerCardProps {
   name: string;
   specialization: string;
   bio: string;
-  image: string;
+  photoUrl: string;
   experience: string;
   index?: number;
 }
@@ -21,7 +21,7 @@ export default function TrainerCard({
   name,
   specialization,
   bio,
-  image,
+  photoUrl,
   experience,
   index = 0,
 }: TrainerCardProps) {
@@ -59,7 +59,7 @@ export default function TrainerCard({
       {/* Image container with overlay */}
       <div className="relative h-80 overflow-hidden">
         <img
-          src={image}
+          src={photoUrl}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-700
                      group-hover:scale-110"

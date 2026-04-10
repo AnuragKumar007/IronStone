@@ -35,7 +35,21 @@
 - Moved `Navbar` and `Footer` to `src/components/shared/`
 - Updated all import paths across layouts and pages
 
+### Phase 3 — Content Pages & Firestore Integration
+- Created `src/lib/firestore.ts` with typed fetch helpers (getTrainers, getEquipment, getGalleryImages, getPricingPlans)
+- Created `scripts/seed.ts` — populates Firestore with dev data (6 trainers, 12 equipment, 12 gallery, 4 pricing plans)
+- Refactored card components: TrainerCard (`image` → `photoUrl`), EquipmentCard (`image` → `imageUrl`), GalleryCard (`image` → `imageUrl`)
+- Refactored Trainers page — Firestore fetch, loading skeletons, Button CTA
+- Refactored Equipment page — Firestore fetch, Button filter pills, dynamic categories, loading skeletons
+- Refactored Gallery page — Firestore fetch, replaced inline lightbox with Modal component, loading skeletons
+- Refactored Pricing page — Firestore fetch, Badge for plan badges, Button for CTAs, kept Razorpay integration
+- Refactored About page — swapped inline CTA with Button component
+- Created Contact page — form with Input/Button components, contact info cards, embedded Google Maps
+- Updated Navbar + Footer with Contact link
+- Added `ContactMessage` type and `badge` field to `PricingPlan` type
+
 ### Status
 - **Phase 1 (Foundation & Auth):** Complete
 - **Phase 2 (Design System & Components):** Complete
-- **Phase 3 (Content Pages):** Not started
+- **Phase 3 (Content Pages):** Complete (contact API route pending)
+- **Phase 4 (Payments & Membership):** Not started

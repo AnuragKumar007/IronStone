@@ -5,96 +5,27 @@
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import PageHero from "@/components/PageHero";
-
-interface Plan {
-  id: string;
-  name: string;
-  price: number; // INR display price
-  pricePaise: number; // INR paise for Razorpay
-  duration: number; // days
-  perMonth: number;
-  features: string[];
-  highlighted: boolean;
-  badge?: string;
-}
-
-const plans: Plan[] = [
-  {
-    id: "monthly",
-    name: "Monthly",
-    price: 1499,
-    pricePaise: 149900,
-    duration: 30,
-    perMonth: 1499,
-    features: [
-      "Full gym access",
-      "Locker facility",
-      "Basic fitness assessment",
-      "Access to all equipment",
-      "Open gym hours (6 AM – 10 PM)",
-    ],
-    highlighted: false,
-  },
-  {
-    id: "quarterly",
-    name: "Quarterly",
-    price: 3999,
-    pricePaise: 399900,
-    duration: 90,
-    perMonth: 1333,
-    features: [
-      "Everything in Monthly",
-      "1 personal training session / month",
-      "Diet consultation",
-      "Progress tracking",
-      "Guest pass (1 / month)",
-    ],
-    highlighted: false,
-  },
-  {
-    id: "halfYearly",
-    name: "Half-Yearly",
-    price: 6999,
-    pricePaise: 699900,
-    duration: 180,
-    perMonth: 1167,
-    features: [
-      "Everything in Quarterly",
-      "2 personal training sessions / month",
-      "Custom workout plan",
-      "Body composition analysis",
-      "Priority booking for classes",
-    ],
-    highlighted: true,
-    badge: "Most Popular",
-  },
-  {
-    id: "yearly",
-    name: "Yearly",
-    price: 11999,
-    pricePaise: 1199900,
-    duration: 365,
-    perMonth: 1000,
-    features: [
-      "Everything in Half-Yearly",
-      "4 personal training sessions / month",
-      "Unlimited guest passes",
-      "Exclusive member events",
-      "Free merchandise kit",
-      "Freeze membership (up to 30 days)",
-    ],
-    highlighted: false,
-    badge: "Best Value",
-  },
-];
+import { Badge, Button } from "@/components/ui";
+import { getPricingPlans } from "@/lib/firestore";
+import type { PricingPlan } from "@/types";
 
 export default function PricingPage() {
   const gridRef = useRef<HTMLDivElement>(null);
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (!gridRef.current) return;
+    getPricingPlans()
+      .then(setPlans)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  // GSAP animation after plans load
+  useEffect(() => {
+    if (loading || !gridRef.current) return;
     const cards = gridRef.current.querySelectorAll(".pricing-card");
     gsap.fromTo(
       cards,
@@ -105,33 +36,31 @@ export default function PricingPage() {
         duration: 0.6,
         stagger: 0.12,
         ease: "power3.out",
-        delay: 0.4,
+        delay: 0.2,
       }
     );
-  }, []);
+  }, [loading]);
 
-  const handleCheckout = async (plan: Plan) => {
+  const handleCheckout = async (plan: PricingPlan) => {
     setSelectedPlan(plan.id);
     setProcessing(true);
 
     try {
-      // Step 1: Create Razorpay order on server
+      const pricePaise = plan.price * 100;
+
       const res = await fetch("/api/payment/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           planId: plan.id,
-          amount: plan.pricePaise,
+          amount: pricePaise,
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to create order");
-      }
+      if (!res.ok) throw new Error("Failed to create order");
 
       const { orderId, amount, currency } = await res.json();
 
-      // Step 2: Open Razorpay checkout
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount,
@@ -144,7 +73,6 @@ export default function PricingPage() {
           razorpay_payment_id: string;
           razorpay_signature: string;
         }) => {
-          // Step 3: Verify payment on server
           const verifyRes = await fetch("/api/payment/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -177,6 +105,9 @@ export default function PricingPage() {
     }
   };
 
+  const getPerMonth = (plan: PricingPlan) =>
+    Math.round(plan.price / (plan.duration / 30));
+
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
       <div className="relative z-10 container mx-auto px-4 md:px-16 py-16">
@@ -189,96 +120,94 @@ export default function PricingPage() {
         />
 
         {/* Plans Grid */}
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto"
-        >
-          {plans.map((plan) => (
-            <div
-              key={plan.id}
-              className={`pricing-card relative rounded-3xl border p-8 flex flex-col transition-all duration-300
-                ${
-                  plan.highlighted
-                    ? "bg-gradient-to-b from-red-950/40 to-[#0d0d0d] border-red-700 scale-[1.02] shadow-lg shadow-red-900/20"
-                    : "bg-[#0d0d0d] border-zinc-800 hover:border-zinc-600"
-                }`}
-            >
-              {/* Badge */}
-              {plan.badge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span
-                    className={`px-4 py-1 text-xs font-bold uppercase tracking-wider rounded-full
-                    ${
-                      plan.highlighted
-                        ? "bg-gradient-to-r from-red-600 to-red-800 text-white"
-                        : "bg-zinc-800 text-gray-300 border border-zinc-700"
-                    }`}
-                  >
-                    {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              {/* Plan Name */}
-              <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-1 mt-2">
-                {plan.name}
-              </h3>
-              <p className="text-gray-500 text-sm mb-6">{plan.duration} days</p>
-
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-gray-500 text-lg">₹</span>
-                  <span className="text-4xl font-black text-white">
-                    {plan.price.toLocaleString("en-IN")}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-sm mt-1">
-                  ₹{plan.perMonth.toLocaleString("en-IN")} / month
-                </p>
-              </div>
-
-              {/* Features */}
-              <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <i
-                      className={`ri-check-line text-sm mt-0.5 ${
-                        plan.highlighted ? "text-red-500" : "text-green-500"
-                      }`}
-                    ></i>
-                    <span className="text-gray-400 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              <button
-                onClick={() => handleCheckout(plan)}
-                disabled={processing && selectedPlan === plan.id}
-                className={`w-full py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider transition-all duration-300
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-zinc-900 animate-pulse rounded-3xl h-[32rem]"
+              />
+            ))}
+          </div>
+        ) : (
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto"
+          >
+            {plans.map((plan) => (
+              <div
+                key={plan.id}
+                className={`pricing-card relative rounded-3xl border p-8 flex flex-col transition-all duration-300
                   ${
                     plan.highlighted
-                      ? "bg-gradient-to-r from-red-600 to-red-800 text-white hover:shadow-lg hover:shadow-red-900/30 hover:-translate-y-0.5"
-                      : "bg-zinc-900 border border-zinc-700 text-white hover:border-red-600 hover:text-red-500"
-                  }
-                  disabled:opacity-50 disabled:cursor-not-allowed`}
+                      ? "bg-gradient-to-b from-red-950/40 to-surface-100 border-red-700 scale-[1.02] shadow-lg shadow-red-900/20"
+                      : "bg-surface-100 border-zinc-800 hover:border-zinc-600"
+                  }`}
               >
-                {processing && selectedPlan === plan.id ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <i className="ri-loader-4-line animate-spin"></i>
-                    Processing...
-                  </span>
-                ) : (
-                  <>
-                    Get Started
-                    <i className="ri-arrow-right-line ml-2"></i>
-                  </>
+                {/* Badge */}
+                {plan.badge && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                    <Badge
+                      variant={plan.highlighted ? "danger" : "neutral"}
+                      size="sm"
+                      className={
+                        plan.highlighted
+                          ? "bg-gradient-to-r from-red-600 to-red-800 text-white uppercase tracking-wider"
+                          : "bg-zinc-800 text-gray-300 border border-zinc-700 uppercase tracking-wider"
+                      }
+                    >
+                      {plan.badge}
+                    </Badge>
+                  </div>
                 )}
-              </button>
-            </div>
-          ))}
-        </div>
+
+                {/* Plan Name */}
+                <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-1 mt-2">
+                  {plan.name}
+                </h3>
+                <p className="text-gray-500 text-sm mb-6">{plan.duration} days</p>
+
+                {/* Price */}
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-gray-500 text-lg">₹</span>
+                    <span className="text-4xl font-black text-white">
+                      {plan.price.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-1">
+                    ₹{getPerMonth(plan).toLocaleString("en-IN")} / month
+                  </p>
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-3 mb-8 flex-1">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3">
+                      <i
+                        className={`ri-check-line text-sm mt-0.5 ${
+                          plan.highlighted ? "text-red-500" : "text-green-500"
+                        }`}
+                      ></i>
+                      <span className="text-gray-400 text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button */}
+                <Button
+                  variant={plan.highlighted ? "primary" : "outline"}
+                  fullWidth
+                  loading={processing && selectedPlan === plan.id}
+                  onClick={() => handleCheckout(plan)}
+                >
+                  Get Started
+                  <i className="ri-arrow-right-line ml-2"></i>
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Bottom Info */}
         <div className="mt-16 text-center">

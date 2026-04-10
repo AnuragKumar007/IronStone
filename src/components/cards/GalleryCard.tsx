@@ -5,14 +5,14 @@
 import { useState } from "react";
 
 interface GalleryCardProps {
-  image: string;
+  imageUrl: string;
   caption?: string;
   index?: number;
   onClick?: () => void;
 }
 
 export default function GalleryCard({
-  image,
+  imageUrl,
   caption,
   index = 0,
   onClick,
@@ -38,7 +38,7 @@ export default function GalleryCard({
 
       {/* Image */}
       <img
-        src={image}
+        src={imageUrl}
         alt={caption || "Gallery image"}
         onLoad={() => setIsLoaded(true)}
         className={`w-full h-full object-cover transition-all duration-700

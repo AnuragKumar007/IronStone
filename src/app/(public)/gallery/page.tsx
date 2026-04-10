@@ -2,27 +2,24 @@
 // ============================================
 // Gallery Page — Gym Photo Gallery
 // ============================================
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageHero from "@/components/PageHero";
 import GalleryCard from "@/components/cards/GalleryCard";
-
-const galleryImages = [
-  { image: "/equipment/equipment-1.png", caption: "Free Weights Zone" },
-  { image: "/trainers/trainer-1.png", caption: "Personal Training Session" },
-  { image: "/trainers/trainer-2.png", caption: "Yoga & Flexibility Class" },
-  { image: "/equipment/equipment-1.png", caption: "Cardio Floor" },
-  { image: "/trainers/trainer-1.png", caption: "Boxing Ring" },
-  { image: "/equipment/equipment-1.png", caption: "CrossFit Area" },
-  { image: "/trainers/trainer-2.png", caption: "Group Classes" },
-  { image: "/equipment/equipment-1.png", caption: "Recovery Lounge" },
-  { image: "/trainers/trainer-1.png", caption: "Strength Zone" },
-  { image: "/equipment/equipment-1.png", caption: "Olympic Lifting Platform" },
-  { image: "/trainers/trainer-2.png", caption: "Stretching Area" },
-  { image: "/equipment/equipment-1.png", caption: "Battle Ropes Station" },
-];
+import { Modal } from "@/components/ui";
+import { getGalleryImages } from "@/lib/firestore";
+import type { GalleryImage } from "@/types";
 
 export default function GalleryPage() {
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
+
+  useEffect(() => {
+    getGalleryImages()
+      .then(setImages)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
@@ -36,25 +33,40 @@ export default function GalleryPage() {
         />
 
         {/* Photo Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {galleryImages.map((img, i) => (
-            <div
-              key={i}
-              className={`${
-                i % 5 === 0 ? "sm:row-span-2 h-[28rem]" :
-                i % 3 === 1 ? "h-72" :
-                "h-64"
-              }`}
-            >
-              <GalleryCard
-                image={img.image}
-                caption={img.caption}
-                index={i}
-                onClick={() => setLightbox(img.image)}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div
+                key={i}
+                className={`bg-zinc-900 animate-pulse rounded-2xl ${
+                  i % 5 === 0 ? "sm:row-span-2 h-[28rem]" : i % 3 === 1 ? "h-72" : "h-64"
+                }`}
               />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {images.map((img, i) => (
+              <div
+                key={img.id}
+                className={`${
+                  i % 5 === 0
+                    ? "sm:row-span-2 h-[28rem]"
+                    : i % 3 === 1
+                    ? "h-72"
+                    : "h-64"
+                }`}
+              >
+                <GalleryCard
+                  imageUrl={img.imageUrl}
+                  caption={img.caption}
+                  index={i}
+                  onClick={() => setLightbox(img.imageUrl)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Note for admin */}
         <div className="mt-16 text-center">
@@ -66,26 +78,15 @@ export default function GalleryPage() {
       </div>
 
       {/* Lightbox Modal */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            className="absolute top-6 right-6 text-white text-3xl hover:text-red-500 transition-colors"
-            onClick={() => setLightbox(null)}
-          >
-            <i className="ri-close-line"></i>
-          </button>
+      <Modal isOpen={!!lightbox} onClose={() => setLightbox(null)} size="lg">
+        {lightbox && (
           <img
             src={lightbox}
             alt="Gallery full view"
-            className="max-w-full max-h-[85vh] object-contain rounded-2xl
-                       shadow-2xl shadow-black/50"
-            onClick={(e) => e.stopPropagation()}
+            className="w-full max-h-[75vh] object-contain rounded-xl"
           />
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 }
