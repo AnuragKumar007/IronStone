@@ -9,6 +9,7 @@ export interface UserData {
   phone: string;
   role: "user" | "admin";
   membershipPlan: "monthly" | "quarterly" | "halfYearly" | "yearly" | null;
+  membershipType: "gym" | "trainer" | null;
   membershipStart: Date | null;
   membershipExpiry: Date | null;
   isActive: boolean;
@@ -51,7 +52,45 @@ export interface PricingPlan {
   features: string[];
   highlighted: boolean;
   badge?: string; // e.g. "Most Popular", "Best Value"
+  // Trainer plan fields
+  trainerPrice: number;
+  trainerFeatures: string[];
+  trainerHighlighted: boolean;
+  trainerBadge?: string;
 }
+
+export interface PricingSettings {
+  showTrainerPlans: boolean;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discountType: "percentage" | "flat";
+  discountValue: number;
+  minPlanTier: number;
+  maxUses: number;
+  currentUses: number;
+  usedBy: string[];
+  expiresAt: Date | null;
+  isActive: boolean;
+  createdAt: Date;
+  createdBy: string;
+}
+
+export const PLAN_TIER_MAP: Record<string, number> = {
+  monthly: 1,
+  quarterly: 2,
+  halfYearly: 3,
+  yearly: 4,
+};
+
+export const PLAN_TIER_LABELS: Record<number, string> = {
+  1: "All plans",
+  2: "Quarterly & above",
+  3: "Half-Yearly & above",
+  4: "Yearly only",
+};
 
 export interface ContactMessage {
   id?: string;

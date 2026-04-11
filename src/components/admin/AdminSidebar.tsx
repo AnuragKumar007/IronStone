@@ -12,6 +12,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin", icon: "ri-dashboard-3-line" },
   { label: "Members", href: "/admin/members", icon: "ri-group-line" },
   { label: "Pricing", href: "/admin/pricing", icon: "ri-price-tag-3-line" },
+  { label: "Coupons", href: "/admin/coupons", icon: "ri-coupon-line" },
   { label: "Trainers", href: "/admin/trainers", icon: "ri-team-line" },
   { label: "Equipment", href: "/admin/equipment", icon: "ri-boxing-line" },
   { label: "Gallery", href: "/admin/gallery", icon: "ri-image-line" },

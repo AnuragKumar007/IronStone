@@ -5,10 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import { cookies } from "next/headers";
+import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(req: NextRequest) {
   try {
-    const { orderId, paymentId, signature, planId, duration } = await req.json();
+    const { orderId, paymentId, signature, planId, planType, duration, couponCode } = await req.json();
 
     if (!orderId || !paymentId || !signature || !planId || !duration) {
       return NextResponse.json(
@@ -59,11 +60,29 @@ export async function POST(req: NextRequest) {
 
     await adminDb.collection("users").doc(uid).update({
       membershipPlan: planId,
+      membershipType: planType || "gym",
       membershipStart: now,
       membershipExpiry: expiry,
       isActive: true,
       razorpayPaymentId: paymentId,
     });
+
+    // Step 5: Mark coupon as used (if one was applied)
+    if (couponCode) {
+      const couponsSnap = await adminDb
+        .collection("coupons")
+        .where("code", "==", couponCode.toUpperCase())
+        .limit(1)
+        .get();
+
+      if (!couponsSnap.empty) {
+        const couponDoc = couponsSnap.docs[0];
+        await couponDoc.ref.update({
+          currentUses: FieldValue.increment(1),
+          usedBy: FieldValue.arrayUnion(uid),
+        });
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

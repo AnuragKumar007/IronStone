@@ -69,3 +69,102 @@
 - **Phase 4 (Payments & Membership):** Skipped for now
 - **Phase 5 (Email Notifications):** Skipped for now
 - **Phase 6 (Admin Panel):** Complete
+
+---
+
+## Day 2 — 2026-04-11
+
+### Pricing Page — Trainer Plans Feature
+- Added "Gym Only" / "With Trainer" toggle on public pricing page
+- Admin can enable/disable the trainer toggle via a switch on `/admin/pricing`
+- When disabled, pricing page looks exactly as before — no toggle visible
+- When enabled, users see a pill switcher to browse trainer-inclusive plans with different prices and features
+- GSAP fade transition when switching between plan types
+
+### Data Model Updates
+- Extended `PricingPlan` type with `trainerPrice`, `trainerFeatures`, `trainerHighlighted`, `trainerBadge`
+- Added `PricingSettings` interface (`showTrainerPlans: boolean`) backed by `settings/pricing` Firestore document
+- Added `membershipType: "gym" | "trainer" | null` to `UserData` — tracks which plan type was purchased
+
+### Admin Pricing Page Rebuild
+- Added global toggle switch at top to control trainer plan visibility
+- Each plan card now has two-column layout: Gym Only (left) and With Trainer (right)
+- Both columns have independent price, features, badge, and highlighted fields
+- Single "Save Changes" button per plan saves all fields together
+- Fixed badge save logic — now saves empty string instead of `undefined` so Firestore always writes the field
+
+### Firestore Helpers
+- Added `getPricingSettings()` and `updatePricingSettings()` in `src/lib/firestore.ts`
+- Added `membershipType` mapping in `getUsers()` for admin members display
+
+### Payment Flow Updates
+- `POST /api/payment/create-order` — accepts `planType`, includes it in Razorpay order notes/receipt
+- `POST /api/payment/verify` — saves `membershipType` ("gym" or "trainer") to user document on successful payment
+- Pricing page sends correct price based on active plan type through checkout
+
+### Membership Type Display
+- Profile page — shows "With Trainer" badge next to plan name when applicable
+- Home dashboard — shows "With Trainer" badge on membership status card
+- Admin Members page — plan column shows "+ Trainer" suffix, detail modal shows "Plan Type" row
+
+### Coupon / Discount System
+- Built full coupon system — admin creates coupons, users apply at checkout for discounted pricing
+- Plan tier hierarchy: monthly(1) < quarterly(2) < halfYearly(3) < yearly(4)
+- `minPlanTier` restriction prevents using premium coupons on cheaper plans
+- One-time use per user — `usedBy` array tracks UIDs, blocks repeat usage
+- Supports percentage and flat (₹) discount types
+- Server-side validation in two places: `/api/coupon/validate` (preview) and `/api/payment/create-order` (enforced)
+- After successful payment, coupon marked as used atomically via `FieldValue.increment` + `arrayUnion`
+
+### Coupon Data Model
+- Added `Coupon` interface: code, discountType, discountValue, minPlanTier, maxUses, currentUses, usedBy, expiresAt, isActive
+- Added `PLAN_TIER_MAP` and `PLAN_TIER_LABELS` constants for plan hierarchy
+- Firestore collection: `coupons/{couponId}`
+
+### Admin Coupons Page (`/admin/coupons`) — NEW
+- DataTable listing all coupons with code, discount, min plan, uses, expiry, status badges
+- Create/Edit modal: code, discount type toggle (% / flat), value, min plan dropdown, max uses, expiry date, active toggle
+- Delete per coupon with confirmation
+- Added "Coupons" link to admin sidebar (between Pricing and Trainers)
+
+### Checkout Confirmation Modal
+- Clicking "Get Started" on pricing page now opens a confirmation modal instead of going straight to Razorpay
+- Modal shows: plan summary, optional coupon input with "Apply" button
+- Applied coupon: green success state, original price crossed out, discount amount, savings, final price
+- "Proceed to Payment" button with final price sends to Razorpay
+- User can skip coupon and pay full price, or remove an applied coupon
+
+### API Routes (Coupon)
+- `POST /api/coupon/validate` — NEW — validates coupon code against plan, returns discount preview
+- `POST /api/payment/create-order` — updated — accepts `couponCode`, re-validates server-side, creates Razorpay order with discounted amount
+- `POST /api/payment/verify` — updated — marks coupon as used after successful payment
+
+### Planning
+- Created `plans/PRICING_WITH_TRAINERS_PLAN.md` — full implementation plan for trainer pricing feature
+- Created `plans/COUPON_SYSTEM_PLAN.md` — full implementation plan for coupon/discount system
+
+### Files Created
+- `src/app/admin/coupons/page.tsx` — admin coupon management page
+- `src/app/api/coupon/validate/route.ts` — coupon validation endpoint
+
+### Files Modified
+- `src/types/index.ts` — PricingPlan, PricingSettings, UserData, Coupon, plan tier constants
+- `src/lib/firestore.ts` — settings helpers, membershipType in getUsers, coupon CRUD helpers
+- `src/app/(public)/pricing/page.tsx` — toggle + dual card rendering + checkout modal with coupon input
+- `src/app/admin/pricing/page.tsx` — full rebuild with two-column layout + settings toggle
+- `src/app/api/payment/create-order/route.ts` — planType + couponCode support with server-side validation
+- `src/app/api/payment/verify/route.ts` — membershipType save + mark coupon as used
+- `src/app/(public)/profile/page.tsx` — trainer badge
+- `src/app/(protected)/home/page.tsx` — trainer badge
+- `src/app/admin/members/page.tsx` — plan type column + modal field
+- `src/components/admin/AdminSidebar.tsx` — added Coupons nav link
+
+### Status
+- **Phase 1 (Foundation & Auth):** Complete
+- **Phase 2 (Design System & Components):** Complete
+- **Phase 3 (Content Pages):** Complete (contact API route pending)
+- **Phase 4 (Payments & Membership):** Skipped for now
+- **Phase 5 (Email Notifications):** Skipped for now
+- **Phase 6 (Admin Panel):** Complete
+- **Trainer Pricing Feature:** Complete
+- **Coupon System:** Complete

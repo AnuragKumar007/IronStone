@@ -4,9 +4,10 @@
 import {
   collection, getDocs, query, orderBy, where,
   doc, addDoc, updateDoc, deleteDoc, writeBatch, Timestamp,
+  getDoc, setDoc, limit, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import type { UserData, Trainer, Equipment, GalleryImage, PricingPlan } from "@/types";
+import type { UserData, Trainer, Equipment, GalleryImage, PricingPlan, PricingSettings, Coupon } from "@/types";
 
 export async function getTrainers(): Promise<Trainer[]> {
   const q = query(collection(db, "trainers"), orderBy("order", "asc"));
@@ -58,6 +59,7 @@ export async function getUsers(filter?: "all" | "active" | "expired" | "noPlan")
       phone: data.phone,
       role: data.role,
       membershipPlan: data.membershipPlan,
+      membershipType: data.membershipType || null,
       membershipStart: data.membershipStart?.toDate() || null,
       membershipExpiry: data.membershipExpiry?.toDate() || null,
       isActive: data.isActive,
@@ -84,6 +86,19 @@ export async function updatePricingPlan(planId: string, data: Partial<PricingPla
   const { id, ...rest } = data as PricingPlan & { id?: string };
   void id;
   await updateDoc(doc(db, "pricing", planId), rest);
+}
+
+// ============================================
+// Pricing Settings
+// ============================================
+export async function getPricingSettings(): Promise<PricingSettings> {
+  const snap = await getDoc(doc(db, "settings", "pricing"));
+  if (!snap.exists()) return { showTrainerPlans: false };
+  return snap.data() as PricingSettings;
+}
+
+export async function updatePricingSettings(data: Partial<PricingSettings>): Promise<void> {
+  await setDoc(doc(db, "settings", "pricing"), data, { merge: true });
 }
 
 // ============================================
@@ -151,4 +166,67 @@ export async function updateGalleryImage(id: string, data: Partial<GalleryImage>
 
 export async function deleteGalleryImage(id: string): Promise<void> {
   await deleteDoc(doc(db, "gallery", id));
+}
+
+// ============================================
+// Coupons
+// ============================================
+export async function getCoupons(): Promise<Coupon[]> {
+  const q = query(collection(db, "coupons"), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      ...data,
+      expiresAt: data.expiresAt?.toDate() || null,
+      createdAt: data.createdAt?.toDate() || new Date(),
+    } as Coupon;
+  });
+}
+
+export async function getCouponByCode(code: string): Promise<Coupon | null> {
+  const q = query(
+    collection(db, "coupons"),
+    where("code", "==", code.toUpperCase()),
+    limit(1)
+  );
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  const data = d.data();
+  return {
+    id: d.id,
+    ...data,
+    expiresAt: data.expiresAt?.toDate() || null,
+    createdAt: data.createdAt?.toDate() || new Date(),
+  } as Coupon;
+}
+
+export async function createCoupon(
+  data: Omit<Coupon, "id" | "currentUses" | "usedBy" | "createdAt">
+): Promise<string> {
+  const ref = await addDoc(collection(db, "coupons"), {
+    ...data,
+    code: data.code.toUpperCase(),
+    currentUses: 0,
+    usedBy: [],
+    expiresAt: data.expiresAt ? Timestamp.fromDate(new Date(data.expiresAt)) : null,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateCoupon(id: string, data: Partial<Coupon>): Promise<void> {
+  const { id: _, createdAt: __, ...rest } = data as Coupon & { id?: string };
+  void _;
+  void __;
+  if (rest.expiresAt) {
+    (rest as Record<string, unknown>).expiresAt = Timestamp.fromDate(new Date(rest.expiresAt));
+  }
+  await updateDoc(doc(db, "coupons", id), rest);
+}
+
+export async function deleteCoupon(id: string): Promise<void> {
+  await deleteDoc(doc(db, "coupons", id));
 }
