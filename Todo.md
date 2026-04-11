@@ -1,0 +1,1 @@
+taking the sociial media urls in creating the cards of them

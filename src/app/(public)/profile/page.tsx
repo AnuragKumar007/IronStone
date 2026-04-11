@@ -178,6 +178,12 @@ function ProfileContent() {
                       <span className="text-white font-bold text-xl capitalize">
                         {userData.membershipPlan} Plan
                       </span>
+                      {userData.membershipType === "trainer" && (
+                        <Badge variant="info" size="sm">
+                          <i className="ri-user-star-line mr-1"></i>
+                          With Trainer
+                        </Badge>
+                      )}
                     </div>
                     {userData.razorpayPaymentId && (
                       <p className="text-gray-600 text-xs">

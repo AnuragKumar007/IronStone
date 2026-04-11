@@ -66,7 +66,11 @@ export default function AdminMembersPage() {
     { key: "name", header: "Name" },
     { key: "email", header: "Email" },
     { key: "phone", header: "Phone", render: (v) => (v as string) || "—" },
-    { key: "membershipPlan", header: "Plan", render: (v) => (v ? String(v) : "—") },
+    { key: "membershipPlan", header: "Plan", render: (v, row) => {
+      if (!v) return "—";
+      const type = row.membershipType === "trainer" ? " + Trainer" : "";
+      return String(v) + type;
+    }},
     {
       key: "membershipExpiry",
       header: "Expiry",
@@ -160,6 +164,7 @@ export default function AdminMembersPage() {
               { label: "Phone", value: viewUser.phone || "—" },
               { label: "Role", value: viewUser.role },
               { label: "Plan", value: viewUser.membershipPlan || "None" },
+              { label: "Plan Type", value: viewUser.membershipType === "trainer" ? "Gym + Trainer" : viewUser.membershipPlan ? "Gym Only" : "—" },
               { label: "Active", value: viewUser.isActive ? "Yes" : "No" },
               { label: "Start", value: viewUser.membershipStart ? new Date(viewUser.membershipStart).toLocaleDateString("en-IN") : "—" },
               { label: "Expiry", value: viewUser.membershipExpiry ? new Date(viewUser.membershipExpiry).toLocaleDateString("en-IN") : "—" },

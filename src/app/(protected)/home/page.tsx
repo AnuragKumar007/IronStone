@@ -146,6 +146,12 @@ export default function HomePage() {
                     <span className="text-white font-bold text-lg capitalize">
                       {userData.membershipPlan} Plan
                     </span>
+                    {userData.membershipType === "trainer" && (
+                      <Badge variant="info" size="sm">
+                        <i className="ri-user-star-line mr-1"></i>
+                        With Trainer
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-gray-400">
                     <i className="ri-calendar-line mr-1"></i>
