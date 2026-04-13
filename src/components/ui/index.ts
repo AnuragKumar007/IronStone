@@ -9,6 +9,7 @@ export { default as Modal } from "./Modal";
 export { default as SectionHeader } from "./SectionHeader";
 export { default as DataTable } from "./DataTable";
 export { default as ImageUpload } from "./ImageUpload";
+export { default as PricingCard } from "./PricingCard";
 
 // Type exports
 export type { BadgeProps } from "./Badge";
@@ -19,3 +20,4 @@ export type { ModalProps } from "./Modal";
 export type { SectionHeaderProps } from "./SectionHeader";
 export type { DataTableProps, Column } from "./DataTable";
 export type { ImageUploadProps } from "./ImageUpload";
+export type { PricingCardProps } from "./PricingCard";

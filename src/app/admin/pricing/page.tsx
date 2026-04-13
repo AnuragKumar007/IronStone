@@ -33,6 +33,8 @@ export default function AdminPricingPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [settings, setSettings] = useState<PricingSettings>({ showTrainerPlans: false });
   const [savingSettings, setSavingSettings] = useState(false);
+  const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([getPricingPlans(), getPricingSettings()])
@@ -75,8 +77,23 @@ export default function AdminPricingPage() {
     const edit = edits[plan.id];
     if (!edit) return;
 
+    const fieldErrors: Record<string, string> = {};
+    if (!edit.price || Number(edit.price) <= 0) fieldErrors.price = "Price must be greater than 0.";
+    if (!edit.features.trim()) fieldErrors.features = "At least one feature is required.";
+    if (settings.showTrainerPlans) {
+      if (!edit.trainerPrice || Number(edit.trainerPrice) <= 0) fieldErrors.trainerPrice = "Trainer price must be greater than 0.";
+      if (!edit.trainerFeatures.trim()) fieldErrors.trainerFeatures = "At least one trainer feature is required.";
+    }
+
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors((prev) => ({ ...prev, [plan.id]: fieldErrors }));
+      return;
+    }
+
+    setErrors((prev) => ({ ...prev, [plan.id]: {} }));
     setSaving(plan.id);
     setSuccess(null);
+    setSaveError(null);
 
     try {
       await updatePricingPlan(plan.id, {
@@ -93,6 +110,7 @@ export default function AdminPricingPage() {
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error("Save failed:", err);
+      setSaveError("Failed to save. Please try again.");
     } finally {
       setSaving(null);
     }
@@ -103,6 +121,13 @@ export default function AdminPricingPage() {
       ...prev,
       [planId]: { ...prev[planId], [field]: value },
     }));
+    // Clear error for this field
+    if (errors[planId]?.[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [planId]: { ...prev[planId], [field]: "" },
+      }));
+    }
   };
 
   if (loading) {
@@ -177,6 +202,7 @@ export default function AdminPricingPage() {
                     type="number"
                     icon="ri-money-rupee-circle-line"
                     value={edit.price}
+                    error={errors[plan.id]?.price}
                     onChange={(e) => updateField(plan.id, "price", e.target.value)}
                   />
 
@@ -196,8 +222,9 @@ export default function AdminPricingPage() {
                       value={edit.features}
                       onChange={(e) => updateField(plan.id, "features", e.target.value)}
                       rows={5}
-                      className="auth-input w-full resize-none text-sm"
+                      className={`auth-input w-full resize-none text-sm ${errors[plan.id]?.features ? "!border-red-500" : ""}`}
                     />
+                    {errors[plan.id]?.features && <p className="text-red-500 text-xs mt-1.5">{errors[plan.id].features}</p>}
                   </div>
 
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -223,6 +250,7 @@ export default function AdminPricingPage() {
                     type="number"
                     icon="ri-money-rupee-circle-line"
                     value={edit.trainerPrice}
+                    error={errors[plan.id]?.trainerPrice}
                     onChange={(e) => updateField(plan.id, "trainerPrice", e.target.value)}
                   />
 
@@ -242,8 +270,9 @@ export default function AdminPricingPage() {
                       value={edit.trainerFeatures}
                       onChange={(e) => updateField(plan.id, "trainerFeatures", e.target.value)}
                       rows={5}
-                      className="auth-input w-full resize-none text-sm"
+                      className={`auth-input w-full resize-none text-sm ${errors[plan.id]?.trainerFeatures ? "!border-red-500" : ""}`}
                     />
+                    {errors[plan.id]?.trainerFeatures && <p className="text-red-500 text-xs mt-1.5">{errors[plan.id].trainerFeatures}</p>}
                   </div>
 
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -275,6 +304,9 @@ export default function AdminPricingPage() {
                     "Save Changes"
                   )}
                 </Button>
+                {saveError && saving === null && (
+                  <p className="text-red-500 text-xs mt-2 text-center">{saveError}</p>
+                )}
               </div>
             </Card>
           );

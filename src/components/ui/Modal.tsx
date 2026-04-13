@@ -49,18 +49,6 @@ export default function Modal({
     return () => window.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
-  // Lock body scroll when open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   return (
@@ -71,14 +59,14 @@ export default function Modal({
         onClick={onClose}
       />
 
-      {/* Panel */}
+      {/* Panel — fixed size, content scrolls inside */}
       <div
         ref={panelRef}
-        className={`relative bg-surface-200 border border-zinc-800 rounded-2xl w-full mx-4 ${sizeClasses[size]}`}
+        className={`relative bg-surface-200 border border-zinc-800 rounded-2xl w-full mx-4 max-h-[85vh] flex flex-col ${sizeClasses[size]}`}
       >
-        {/* Header */}
+        {/* Header — stays pinned */}
         {title && (
-          <div className="flex items-center justify-between px-6 pt-6 pb-0">
+          <div className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0 ">
             <h3 className="text-white text-lg font-bold">{title}</h3>
             <button
               onClick={onClose}
@@ -101,8 +89,10 @@ export default function Modal({
           </button>
         )}
 
-        {/* Content */}
-        <div className="p-6">{children}</div>
+        {/* Content — scrollable */}
+        <div className="p-6 overflow-y-auto overscroll-contain" data-lenis-prevent>
+          {children}
+        </div>
       </div>
     </div>
   );

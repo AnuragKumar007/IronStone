@@ -65,15 +65,6 @@ export default function Navbar() {
 
   return (
     <>
-    {/* Floating hamburger — always visible on mobile regardless of navbar state */}
-    <button
-      onClick={() => setMobileOpen(!mobileOpen)}
-      className={`lg:hidden fixed top-4 right-6 z-[110] text-white text-2xl hover:text-red-500 transition-colors ${mobileOpen ? "hidden" : "flex"}`}
-      aria-label="Toggle menu"
-    >
-      <i className="ri-menu-line" />
-    </button>
-
     <div ref={wrapperRef} className="fixed top-0 left-0 w-full z-40 navbar transition-transform duration-300">
       <nav
         ref={navRef}
@@ -118,8 +109,17 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right side: Auth */}
+          {/* Right side: Auth + Hamburger */}
           <div className="flex items-center gap-4 z-50">
+            {/* Mobile hamburger — inside nav so it hides/shows with navbar */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className={`lg:hidden text-white text-2xl hover:text-red-500 transition-colors ${mobileOpen ? "hidden" : "flex"}`}
+              aria-label="Toggle menu"
+            >
+              <i className="ri-menu-line" />
+            </button>
+
             {/* Auth button */}
             {!loading && (
               <>
