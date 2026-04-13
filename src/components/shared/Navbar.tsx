@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
+import { useLenis } from "lenis/react";
 import { useAuth } from "@/hooks/useAuth";
 import { logOut } from "@/lib/auth";
 
@@ -17,6 +18,7 @@ const publicLinks = [
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -29,16 +31,32 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!navRef.current) return;
-    const timer = setTimeout(() => {
-      gsap.to(navRef.current, {
-        scaleY: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-    }, 3000);
-    return () => clearTimeout(timer);
+    gsap.to(navRef.current, {
+      scaleY: 1,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power3.out",
+    });
   }, []);
+
+  // Hide/show navbar based on scroll direction (using Lenis)
+  const onLenisScroll = useCallback(
+    (e: { scroll: number; direction: number }) => {
+      if (mobileOpen || !wrapperRef.current) return;
+      const currentY = e.scroll;
+
+      if (e.direction === 1 && currentY > 80) {
+        // Scrolling down & past navbar height — hide
+        wrapperRef.current.style.transform = "translateY(-100%)";
+      } else {
+        // Scrolling up or at top — show
+        wrapperRef.current.style.transform = "translateY(0)";
+      }
+    },
+    [mobileOpen]
+  );
+
+  useLenis(onLenisScroll);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -46,10 +64,20 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <div className="fixed top-0 left-0 w-full z-40 navbar">
+    <>
+    {/* Floating hamburger — always visible on mobile regardless of navbar state */}
+    <button
+      onClick={() => setMobileOpen(!mobileOpen)}
+      className={`lg:hidden fixed top-4 right-6 z-[110] text-white text-2xl hover:text-red-500 transition-colors ${mobileOpen ? "hidden" : "flex"}`}
+      aria-label="Toggle menu"
+    >
+      <i className="ri-menu-line" />
+    </button>
+
+    <div ref={wrapperRef} className="fixed top-0 left-0 w-full z-40 navbar transition-transform duration-300">
       <nav
         ref={navRef}
-        className="bg-black/80 backdrop-blur-md w-full px-8 md:px-16 py-5 opacity-0 scale-y-0 origin-top"
+        className="bg-black/80 backdrop-blur-md w-full px-6 md:px-12 lg:px-20 py-4 md:py-5 opacity-0 scale-y-0 origin-top"
       >
         <div className="flex items-center justify-between container mx-auto">
           {/* Logo */}
@@ -90,21 +118,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right side: Auth + Socials + Hamburger */}
-          <div className="flex items-center gap-4">
-            {/* Social icons — desktop only */}
-            <div className="hidden md:flex items-center gap-3 text-white mr-2">
-              <a href="#" className="hover:text-red-500 transition-colors">
-                <i className="ri-facebook-fill text-lg"></i>
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                <i className="ri-twitter-x-line text-lg"></i>
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                <i className="ri-instagram-line text-lg"></i>
-              </a>
-            </div>
-
+          {/* Right side: Auth */}
+          <div className="flex items-center gap-4 z-50">
             {/* Auth button */}
             {!loading && (
               <>
@@ -126,49 +141,65 @@ export default function Navbar() {
                                hover:border-red-500 hover:text-red-500 transition-all duration-300"
                   >
                     <i className="ri-login-box-line"></i>
-                    Login
+                    Login / Signup
                   </Link>
                 )}
               </>
             )}
-
-            {/* Hamburger button — mobile */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden text-white text-2xl hover:text-red-500 transition-colors"
-              aria-label="Toggle menu"
-            >
-              <i className={mobileOpen ? "ri-close-line" : "ri-menu-line"} />
-            </button>
           </div>
         </div>
       </nav>
+    </div>
 
-      {/* Mobile Menu Drawer */}
-      <div
-        className={`lg:hidden fixed inset-0 z-30 transition-all duration-500
-          ${mobileOpen ? "pointer-events-auto" : "pointer-events-none"}`}
-      >
-        {/* Backdrop */}
+    {/* Mobile Menu Drawer — outside wrapperRef so it's never affected by scroll-hide */}
+    <div
+      className={`lg:hidden fixed inset-0 z-[100]
+        ${mobileOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+    >
+        {/* Backdrop (Solid Dark Background for full screen) */}
         <div
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-400
-            ${mobileOpen ? "opacity-100" : "opacity-0"}`}
-          onClick={() => setMobileOpen(false)}
+          className={`absolute inset-0 bg-[#0a0a0a] backdrop-blur-xl
+            ${mobileOpen ? "flex" : "hidden"}`}
         />
-        {/* Drawer */}
+        {/* Full Screen Content Wrapper */}
         <div
-          className={`absolute right-0 top-0 h-full w-[280px] bg-[#0a0a0a] border-l border-zinc-800
-            transform transition-transform duration-500 ease-out
-            ${mobileOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute inset-0 h-full w-full flex flex-col pt-[18px] px-6 md:px-12
+            ${mobileOpen ? "flex" : "hidden"}`}
         >
-          <div className="pt-24 px-8 space-y-2">
+          {/* Header inside Menu */}
+          <div className="flex items-center justify-between z-50 relative w-full mb-12">
+            <Link href="/" className="text-white flex items-center gap-3 shrink-0" onClick={() => setMobileOpen(false)}>
+              <img
+                src="/logo-light.png"
+                alt="IronStone Logo"
+                className="h-10 w-auto object-contain"
+              />
+              <h1 className="text-2xl font-bold tracking-tight uppercase">
+                Iron
+                <span className="bg-gradient-to-b from-[#ff3333] via-[#cc0000] to-[#660000] text-transparent bg-clip-text">
+                  Stone
+                </span>
+              </h1>
+            </Link>
+            
+            {/* Close button inside full screen menu to replace the one covered underneath */}
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="text-white text-2xl hover:text-red-500 transition-colors"
+              aria-label="Close menu"
+            >
+              <i className="ri-close-line" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto space-y-4 relative z-40 w-full pl-2">
             {user && (
               <Link
                 href="/home"
-                className={`block py-3 text-sm font-bold uppercase tracking-widest transition-colors
+                className={`block py-3 text-lg md:text-xl font-bold uppercase tracking-widest transition-colors
                   ${pathname === "/home" ? "text-red-500" : "text-gray-400 hover:text-white"}`}
               >
-                <i className="ri-dashboard-line mr-2"></i>
+                <i className="ri-dashboard-line mr-3"></i>
                 Home
               </Link>
             )}
@@ -176,47 +207,62 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block py-3 text-sm font-bold uppercase tracking-widest transition-colors
+                className={`block py-3 text-lg md:text-xl font-bold uppercase tracking-widest transition-colors
                   ${pathname === link.href ? "text-red-500" : "text-gray-400 hover:text-white"}`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="h-px bg-zinc-800 my-4" />
+            
+            <div className="h-px bg-zinc-800 w-3/4 max-w-[300px] my-6" />
+            
             {!loading && (
               <>
                 {user ? (
                   <Link
                     href="/profile"
-                    className="block py-3 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white"
+                    className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-gray-400 hover:text-white"
                   >
-                    <i className="ri-user-line mr-2"></i>
+                    <i className="ri-user-line mr-3"></i>
                     Profile
                   </Link>
                 ) : (
                   <>
                     <Link
                       href="/login"
-                      className="block py-3 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white"
+                      className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-gray-400 hover:text-white"
                     >
-                      <i className="ri-login-box-line mr-2"></i>
+                      <i className="ri-login-box-line mr-3"></i>
                       Login
                     </Link>
                     <Link
                       href="/signup"
-                      className="block py-3 text-sm font-bold uppercase tracking-widest text-red-500"
+                      className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-red-500"
                     >
-                      <i className="ri-user-add-line mr-2"></i>
+                      <i className="ri-user-add-line mr-3"></i>
                       Sign Up
                     </Link>
                   </>
                 )}
               </>
             )}
+            
+            {/* Social Icons inside mobile menu */}
+            <div className="flex items-center gap-6 mt-8 pt-8 pb-12">
+              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">
+                <i className="ri-facebook-fill text-2xl"></i>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">
+                <i className="ri-twitter-x-line text-2xl"></i>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors">
+                <i className="ri-instagram-line text-2xl"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

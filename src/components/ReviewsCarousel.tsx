@@ -1,129 +1,182 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useRef, useState } from "react";
 
-export default function ReviewsCarousel() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const cardsRef = useRef<HTMLDivElement[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+// Structure mirrors Google Places API review object for future integration
+interface Review {
+    author_name: string;
+    profile_photo_url: string;
+    rating: number;
+    relative_time_description: string;
+    text: string;
+}
 
-    const reviews = [
-        {
-            name: "Emily Doe",
-            color: "bg-zinc-900 border border-zinc-800",
-            img: "https://media.istockphoto.com/id/1218975799/photo/bad-skin-days-are-a-thing-of-the-past.jpg?s=2048x2048&w=is&k=20&c=DQNo0EdTL3OViL9pWxWq_ik7PhHnXb1WU3Pr_kYBwUc=",
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Lorem ipsum dolor sit amet."
-        },
-        {
-            name: "Jane Smith",
-            color: "bg-zinc-800 border border-zinc-700",
-            img: "https://media.istockphoto.com/id/1329665103/photo/shot-of-a-young-women-using-mobile-phone-standing-isolated-over-yellow-background.jpg?s=2048x2048&w=is&k=20&c=Xl00zMUp1UH0aCACdgxVkBO54KULAqSK1QnHUV9kSWc=",
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Lorem ipsum dolor sit amet."
-        },
-        {
-            name: "Alice Johnson",
-            color: "bg-black border border-zinc-900",
-            img: "https://media.istockphoto.com/id/1399193450/photo/portrait-of-attractive-cheerful-groomed-wavy-haired-girl-demonstrating-contour-skin-uplift.jpg?s=2048x2048&w=is&k=20&c=Md_7LemOoNkc_0qMBI2oagulm90ucyN1ncMElxIB4Pc=",
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Lorem ipsum dolor sit amet."
-        }
-    ];
+// Mock reviews — replace with real Google Reviews API data later
+const mockReviews: Review[] = [
+    {
+        author_name: "Rahul Sharma",
+        profile_photo_url: "",
+        rating: 5,
+        relative_time_description: "2 weeks ago",
+        text: "Best gym in the city! The trainers are incredibly knowledgeable and the equipment is top-notch. Been a member for 6 months and the transformation has been amazing.",
+    },
+    {
+        author_name: "Priya Patel",
+        profile_photo_url: "",
+        rating: 5,
+        relative_time_description: "1 month ago",
+        text: "IronStone completely changed my fitness journey. The environment is motivating, staff is supportive, and the facility is always clean. Highly recommend!",
+    },
+    {
+        author_name: "Arjun Mehta",
+        profile_photo_url: "",
+        rating: 4,
+        relative_time_description: "3 weeks ago",
+        text: "Great equipment variety and spacious workout area. The personal training sessions are worth every penny. Only wish they had extended weekend hours.",
+    },
+    {
+        author_name: "Sneha Reddy",
+        profile_photo_url: "",
+        rating: 5,
+        relative_time_description: "1 week ago",
+        text: "The best decision I made this year was joining IronStone. From the atmosphere to the trainers to the community — everything is perfect. 10/10!",
+    },
+    {
+        author_name: "Vikram Singh",
+        profile_photo_url: "",
+        rating: 5,
+        relative_time_description: "2 months ago",
+        text: "Fantastic gym with world-class facilities. The trainers push you hard but in the right way. I've seen incredible results in just 3 months.",
+    },
+    {
+        author_name: "Ananya Kapoor",
+        profile_photo_url: "",
+        rating: 4,
+        relative_time_description: "3 weeks ago",
+        text: "Love the vibe here! Clean, well-maintained, and the strength training section is massive. The community events are a great touch too.",
+    },
+];
 
-    useEffect(() => {
-        if (cardsRef.current.length === 0) return;
+function getInitials(name: string) {
+    return name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase();
+}
 
-        cardsRef.current.forEach((card, i) => {
-            let offset = i - currentIndex;
-            if (offset < 0) offset += reviews.length; // wrap around
-
-            let x = 0;
-            let scale = 1;
-            let zIndex = 3 - offset;
-            let opacity = 1;
-
-            if (offset === 0) {
-                x = 0;
-                scale = 1;
-                opacity = 1;
-            } else if (offset === 1) {
-                x = 50;
-                scale = 0.9;
-                opacity = 0.7;
-            } else if (offset === 2) {
-                x = -50;
-                scale = 0.9;
-                opacity = 0.7;
-            }
-
-            gsap.to(card, {
-                x: x,
-                scale: scale,
-                zIndex: zIndex,
-                opacity: opacity,
-                duration: 0.5,
-                ease: "power2.out"
-            });
-        });
-    }, [currentIndex, reviews.length]);
-
-    const handleNext = () => {
-        setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    };
-
-    const handlePrev = () => {
-        setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
-    };
-
+function StarRating({ rating }: { rating: number }) {
     return (
-        <div className="reviews-section py-16 bg-black z-10 relative">
-            <div className="text-center mb-12">
-                <h4 className="text-lg text-gray-300">Ratings & Reviews</h4>
-                <h2 className="text-4xl md:text-6xl font-bold text-white">What people are saying</h2>
+        <div className="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+                <i
+                    key={star}
+                    className={`ri-star-fill text-sm ${
+                        star <= rating ? "text-yellow-500" : "text-zinc-700"
+                    }`}
+                />
+            ))}
+        </div>
+    );
+}
+
+function ReviewCard({ review, index }: { review: Review; index: number }) {
+    return (
+        <div className="review-card-item group bg-surface-100 border border-zinc-800 rounded-3xl p-6 flex flex-col gap-4 hover:border-zinc-700 transition-all duration-300">
+            {/* Header: Avatar + Name + Google icon */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    {review.profile_photo_url ? (
+                        <img
+                            src={review.profile_photo_url}
+                            alt={review.author_name}
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white text-sm font-bold">
+                            {getInitials(review.author_name)}
+                        </div>
+                    )}
+                    <div>
+                        <h4 className="text-white text-sm font-bold">
+                            {review.author_name}
+                        </h4>
+                        <p className="text-gray-500 text-xs">
+                            {review.relative_time_description}
+                        </p>
+                    </div>
+                </div>
+                <i className="ri-google-fill text-lg text-gray-500" />
             </div>
 
-            <div className="flex justify-center items-center space-x-10 relative" ref={containerRef}>
-                <div
-                    onClick={handlePrev}
-                    className="cursor-pointer absolute left-4 md:left-[14.5rem] z-10 border-2 border-white hover:bg-white/20 transition-all rounded-full px-4 py-3"
-                >
-                    <i className="ri-arrow-left-s-line text-2xl text-white"></i>
-                </div>
+            {/* Rating */}
+            <StarRating rating={review.rating} />
 
-                <div className="relative w-full md:w-[80%] h-[400px] overflow-hidden perspective-1000">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        {reviews.map((review, i) => (
-                            <div
-                                key={i}
-                                ref={(el) => {
-                                    if (el) cardsRef.current[i] = el;
-                                }}
-                                className={`review-card ${review.color} w-[20rem] md:w-[24rem] h-[17rem] p-6 rounded-lg shadow-lg absolute origin-center`}
-                            >
-                                <div className="flex items-center mb-4">
-                                    <img src={review.img} alt={review.name} className="w-12 h-12 rounded-full mr-4 object-cover" />
-                                    <div>
-                                        <h4 className="text-lg text-white font-bold">{review.name}</h4>
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <div className="flex items-center mb-2">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <i key={star} className={`ri-star-fill text-2xl ${i === 1 ? 'text-red-500' : 'text-yellow-500'}`}></i>
-                                        ))}
-                                    </div>
-                                    <p className="text-white text-sm">{review.text}</p>
-                                </div>
-                            </div>
-                        ))}
+            {/* Review text */}
+            <p className="text-gray-300 text-sm leading-relaxed flex-1">
+                {review.text}
+            </p>
+        </div>
+    );
+}
+
+export default function ReviewsCarousel() {
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [showAll, setShowAll] = useState(false);
+
+    const displayedReviews = showAll ? mockReviews : mockReviews.slice(0, 3);
+
+    const averageRating = (
+        mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length
+    ).toFixed(1);
+
+    return (
+        <section
+            ref={sectionRef}
+            className="py-16 md:py-24 bg-black relative z-10"
+        >
+            <div className="container mx-auto px-6 md:px-12 lg:px-20">
+                {/* Section Header */}
+                <div className="text-center mb-12 md:mb-16">
+                    <p className="text-red-500 text-xs font-semibold uppercase tracking-widest mb-3">
+                        Testimonials
+                    </p>
+                    <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
+                        What Our Members Say
+                    </h2>
+                    <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
+                        Real experiences from our community
+                    </p>
+
+                    {/* Google Rating Summary */}
+                    <div className="flex items-center justify-center gap-3 mt-6">
+                        <i className="ri-google-fill text-2xl text-white" />
+                        <span className="text-white text-2xl font-black">{averageRating}</span>
+                        <StarRating rating={Math.round(Number(averageRating))} />
+                        <span className="text-gray-500 text-sm">
+                            ({mockReviews.length} reviews)
+                        </span>
                     </div>
                 </div>
 
-                <div
-                    onClick={handleNext}
-                    className="absolute right-4 md:right-[14.5rem] z-10 cursor-pointer border-2 border-white hover:bg-white/20 transition-all rounded-full px-4 py-3"
-                >
-                    <i className="ri-arrow-right-s-line text-2xl text-white"></i>
+                {/* Review Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    {displayedReviews.map((review, i) => (
+                        <ReviewCard key={i} review={review} index={i} />
+                    ))}
                 </div>
+
+                {/* See More / See Less */}
+                {mockReviews.length > 3 && (
+                    <div className="flex justify-center mt-10">
+                        <button
+                            onClick={() => setShowAll(!showAll)}
+                            className="px-6 py-2.5 border border-zinc-700 text-white text-sm font-bold uppercase tracking-wider rounded-full hover:border-red-500 hover:text-red-500 transition-all duration-300"
+                        >
+                            {showAll ? "Show Less" : "See More Reviews"}
+                        </button>
+                    </div>
+                )}
             </div>
-        </div>
+        </section>
     );
 }

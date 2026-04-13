@@ -8,17 +8,17 @@ import DifficultSection from "@/components/DifficultSection";
 import StyleSection from "@/components/StyleSection";
 import MembershipSection from "@/components/MembershipSection";
 import ReviewsCarousel from "@/components/ReviewsCarousel";
-import FloatingImagesSection from "@/components/FloatingImagesSection";
+import WorkoutWithSection from "@/components/WorkoutWithSection";
 import DownloadAppSection from "@/components/DownloadAppSection";
 import Footer from "@/components/shared/Footer";
 
 export default function Home() {
   return (
-    <main className="bg-black min-h-screen font-sans">
+    <main className="bg-black min-h-screen font-sans overflow-x-hidden">
       {/* <LoadingScreen /> */}
       <Navbar />
       <HeroSection />
-      <FloatingImagesSection />
+      <WorkoutWithSection />
       <WorkoutPlansSection />
       <DefineGoalsSection />
       {/* <DifficultSection />
