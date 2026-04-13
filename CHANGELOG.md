@@ -244,3 +244,88 @@
 - **Trainer Pricing Feature:** Complete
 - **Coupon System:** Complete
 - **Landing Page Responsiveness:** In Progress
+
+---
+
+## Day 4 — 2026-04-13
+
+### WorkoutPlansSection — Mobile Overflow Fix
+- Fixed heading text overflowing viewport on mobile (320px) by splitting pinned section into outer wrapper + inner content div to avoid GSAP `position: fixed` conflicts with layout CSS
+- Reduced heading from `text-3xl` to `text-2xl` on small screens, added `break-words`
+- Added `min-w-0 overflow-hidden` on flex children to prevent Lottie intrinsic size from blowing out container
+- Added inline styles as fallback to ensure width constraints survive GSAP's inline style overrides
+- Replaced arbitrary Tailwind values with standard classes: `w-[23rem] h-[23rem]` → `size-96`, `left-[-5rem]` → `-left-20`, `top-[16rem]` → `top-64`, `leading-[1.1]` → `leading-tight`
+- Moved `blur-[80px]` to inline style (no standard Tailwind class for 80px blur)
+
+### Auth Pages — Lottie Animation
+- Replaced `MuscleMan2` SVG component with DotLottieReact animation on both login and signup pages
+- Set `autoplay={false}` to avoid conflict with GSAP scroll-driven frame control
+- Fixed Next.js `Image` component on signup page — added required `width` and `height` props
+
+### Navbar — Hamburger Placement
+- Moved hamburger button from `fixed` position outside navbar into the nav bar itself
+- Now hides/shows with navbar on scroll instead of floating independently on the page
+
+### Shared PricingCard Component
+- Created `src/components/ui/PricingCard.tsx` — shared card used on both landing and pricing pages
+- Card renders badge, plan name, duration, price, per-month cost, and features
+- CTA button passed via `children` prop — pricing page passes checkout button, landing page passes link to `/pricing`
+- Updated `src/components/ui/index.ts` barrel export
+
+### MembershipSection — Firestore Integration
+- Replaced hardcoded pricing cards with Firestore-fetched plans via `getPricingPlans()`
+- Added "Gym Only / With Trainer" toggle matching the pricing page design
+- Fetches `PricingSettings` to conditionally show trainer toggle
+- Uses same helper functions (`getPrice`, `getFeatures`, `getBadge`, `isHighlighted`) as pricing page
+- Loading skeleton grid while data fetches
+
+### Modal — Mobile Scroll Fix
+- Fixed modal content not scrollable on mobile — content was overflowing below viewport
+- Root cause: Lenis smooth scroll library hijacking scroll events on modal overlay
+- Added `data-lenis-prevent` to content div to restore native scrolling
+- Set `max-h-[85vh] flex flex-col` on panel, `overflow-y-auto` on content div
+- Header stays pinned at top with `shrink-0`
+- Removed `document.body.style.overflow = "hidden"` which was blocking modal's own scroll
+
+### Admin — Form Validation & Error Display
+- **Coupons page:** Added inline error messages for code (required, 6 chars, unique), discount (required, percentage ≤ 100). Replaced silent `return` and `alert()` with red error text below fields
+- **TrainerForm:** Added validation for name, specialization, bio, experience (all required), photo required for new trainers
+- **EquipmentForm:** Added validation for name, description (required), image required for new equipment
+- **Gallery page:** Shows error if no file selected on upload, displays upload failure message
+- **Pricing page:** Price must be > 0, at least one feature required. Trainer fields validated when trainer plans enabled. Save failure shown
+
+### Admin — Coupon Code Generation
+- Added "Generate Random Code" button below coupon code input
+- Generates 6-character alphanumeric code (A-Z, a-z, 0-9)
+- Checks against existing coupons to guarantee uniqueness
+- Manual input limited to 6 characters, strips special characters
+- Duplicate check on save prevents creating coupons with existing codes
+
+### Files Created
+- `src/components/ui/PricingCard.tsx` — shared pricing card component
+
+### Files Modified
+- `src/components/WorkoutPlansSection.tsx` — mobile overflow fix, arbitrary value cleanup
+- `src/app/(auth)/login/page.tsx` — Lottie animation replacement
+- `src/app/(auth)/signup/page.tsx` — Lottie animation + Image fix
+- `src/components/shared/Navbar.tsx` — hamburger moved inside nav
+- `src/components/MembershipSection.tsx` — Firestore integration + trainer toggle
+- `src/components/ui/index.ts` — PricingCard export
+- `src/components/ui/Modal.tsx` — mobile scroll fix
+- `src/app/(public)/pricing/page.tsx` — uses shared PricingCard
+- `src/app/admin/coupons/page.tsx` — validation + code generation
+- `src/app/admin/gallery/page.tsx` — upload error display
+- `src/app/admin/pricing/page.tsx` — field validation
+- `src/components/admin/TrainerForm.tsx` — form validation
+- `src/components/admin/EquipmentForm.tsx` — form validation
+
+### Status
+- **Phase 1 (Foundation & Auth):** Complete
+- **Phase 2 (Design System & Components):** Complete
+- **Phase 3 (Content Pages):** Complete (contact API route pending)
+- **Phase 4 (Payments & Membership):** Skipped for now
+- **Phase 5 (Email Notifications):** Skipped for now
+- **Phase 6 (Admin Panel):** Complete
+- **Trainer Pricing Feature:** Complete
+- **Coupon System:** Complete
+- **Landing Page Responsiveness:** In Progress
