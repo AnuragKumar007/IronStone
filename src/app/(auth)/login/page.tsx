@@ -6,7 +6,7 @@ import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
-import MuscleMan from "@/components/auth/MuscleMan2";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { signInWithEmail, signInWithGoogle, resetPassword } from "@/lib/auth";
 import { Input, Button } from "@/components/ui";
 
@@ -146,7 +146,11 @@ function LoginContent() {
             : "Let's roll! 💪"}
         </p>
 
-        <MuscleMan progress={progress} />
+        <DotLottieReact
+          src="https://lottie.host/ec1841d4-4cda-4e4b-a53f-59cafe95d5dc/4umXhxqPNi.lottie"
+          loop
+          autoplay
+        />
       </div>
 
       {/* Right — Form Section */}

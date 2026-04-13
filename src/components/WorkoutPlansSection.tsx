@@ -32,11 +32,11 @@ export default function WorkoutPlansSection() {
             const { isDesktop } = context.conditions!;
 
             // Set initial states
-            gsap.set([leftSectionRef.current, rightSectionRef.current], {
-                opacity: 1,
-                x: 0,
-                y: 0
-            });
+            // gsap.set([leftSectionRef.current, rightSectionRef.current], {
+            //     opacity: 1,
+            //     x: 0,
+            //     y: 0
+            // });
 
             const mainTl = gsap.timeline({
                 scrollTrigger: {
@@ -119,41 +119,48 @@ export default function WorkoutPlansSection() {
 
     return (
         <div
-            className="flex flex-col md:flex-row items-center justify-center min-h-screen container mx-auto px-[-20px] md:px-12 lg:px-20 gap-10 md:gap-16 pt-24 pb-16 relative overflow-hidden border border-lime-500"
+            className="min-h-screen relative overflow-hidden"
             id="workout-section"
             ref={sectionRef}
+            style={{ width: '100vw', maxWidth: '100%' }}
         >
-            {/* Blurred sphere */}
-            <div
-                ref={blurredSphereRef}
-                className="absolute left-[-5rem] top-[16rem] transform -translate-y-1/2 -translate-x-1/4 z-0 opacity-0"
-            >
+            <div className="flex flex-col md:flex-row items-center justify-center min-h-screen max-w-7xl mx-auto px-4 md:px-12 lg:px-20 gap-10 md:gap-16 pt-24 pb-16 relative"
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+                {/* Blurred sphere */}
                 <div
-                    ref={sphereDivRef}
-                    className="w-[23rem] h-[23rem] rounded-full bg-gradient-to-r from-red-600/30 to-red-900/30 blur-[80px]"
-                ></div>
-            </div>
-
-            {/* Left Side - Text Content */}
-            <div ref={leftSectionRef} className="left-section w-full md:w-1/2 relative my-auto z-10 text-center md:text-left border border-white">
-                {/* Text Block */}
-                <div ref={textBlock2Ref} className="space-y-4">
-                    <p className="uppercase tracking-widest text-xs md:text-sm font-semibold text-red-500">Train With Purpose</p>
-                    <h2 className="text-white text-3xl md:text-5xl lg:text-6xl leading-[1.1] font-bold tracking-tight">
-                        Structured plans to push your limits every session
-                    </h2>
+                    ref={blurredSphereRef}
+                    className="absolute -left-20 top-64 transform -translate-y-1/2 -translate-x-1/4 z-0 opacity-0"
+                >
+                    <div
+                        ref={sphereDivRef}
+                        className="size-96 rounded-full bg-gradient-to-r from-red-600/30 to-red-900/30"
+                        style={{ filter: 'blur(80px)' }}
+                    ></div>
                 </div>
-            </div>
 
-            {/* Right Side - Lottie Animation */}
-            <div ref={rightSectionRef} className="right-section w-full md:w-1/2 flex items-center justify-center z-10 ">
-                <div ref={lottieContainerRef} className="w-full h-full">
-                    <DotLottieReact
-                        src="https://lottie.host/8b1342d2-9500-41d7-b6e7-3303379e0828/PJfITWks6v.lottie"
-                        loop={false}
-                        autoplay={false}
-                        dotLottieRefCallback={dotLottieRefCallback}
-                    />
+                {/* Left Side - Text Content */}
+                <div  className="md:w-1/2 min-w-0 relative my-auto z-10 text-center md:text-left  "
+                    style={{ width: '100%', maxWidth: '100%' }}>
+                    {/* Text Block */}
+                    <div ref={textBlock2Ref} className="space-y-4 border-blue">
+                        <p className="uppercase tracking-widest text-xs md:text-sm font-semibold text-red-500">Train With Purpose</p>
+                        <h2 className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl leading-tight font-bold tracking-tight break-words">
+                            Structured plans to push your limits every session
+                        </h2>
+                    </div>
+                </div>
+
+                {/* Right Side - Lottie Animation */}
+                <div ref={rightSectionRef} className="right-section md:w-1/2 min-w-0 overflow-hidden flex items-center justify-center z-10"
+                    style={{ width: '100%', maxWidth: '100%' }}>
+                    <div ref={lottieContainerRef} className="w-full h-full">
+                        <DotLottieReact
+                            src="https://lottie.host/8b1342d2-9500-41d7-b6e7-3303379e0828/PJfITWks6v.lottie"
+                            loop={false}
+                            autoplay={false}
+                            dotLottieRefCallback={dotLottieRefCallback}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

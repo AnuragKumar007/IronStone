@@ -6,9 +6,10 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import gsap from "gsap";
-import MuscleMan from "@/components/auth/MuscleMan2";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { signUpWithEmail, signInWithGoogle } from "@/lib/auth";
 import { Input, Button } from "@/components/ui";
+import Image from "next/image";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -125,7 +126,11 @@ export default function SignupPage() {
             : "You're all set! LET'S GO! 💪"}
         </p>
 
-        <MuscleMan progress={progress} />
+        <DotLottieReact
+          src="https://lottie.host/ec1841d4-4cda-4e4b-a53f-59cafe95d5dc/4umXhxqPNi.lottie"
+          loop
+          autoplay
+        />
       </div>
 
       {/* Right — Form Section */}
@@ -137,7 +142,7 @@ export default function SignupPage() {
         >
           {/* Logo */}
           <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.png" alt="IronStone" className="h-8 w-auto" />
+            <Image src="/logo.png" alt="IronStone" width={32} height={32} className="h-8 w-auto" />
             <span className="text-xl font-bold text-white uppercase tracking-tight">
               Iron
               <span className="bg-gradient-to-b from-[#ff3333] via-[#cc0000] to-[#660000] text-transparent bg-clip-text">
