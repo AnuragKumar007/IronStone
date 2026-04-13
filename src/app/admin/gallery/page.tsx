@@ -20,6 +20,7 @@ export default function AdminGalleryPage() {
   const [newFile, setNewFile] = useState<File | null>(null);
   const [editingCaption, setEditingCaption] = useState<string | null>(null);
   const [captionValue, setCaptionValue] = useState("");
+  const [uploadError, setUploadError] = useState("");
 
   const fetchImages = () => {
     setLoading(true);
@@ -29,7 +30,11 @@ export default function AdminGalleryPage() {
   useEffect(() => { fetchImages(); }, []);
 
   const handleUpload = async () => {
-    if (!newFile) return;
+    if (!newFile) {
+      setUploadError("Please select an image to upload.");
+      return;
+    }
+    setUploadError("");
     setSubmitting(true);
     try {
       const imageUrl = await uploadImage("gallery", newFile);
@@ -45,6 +50,7 @@ export default function AdminGalleryPage() {
       fetchImages();
     } catch (err) {
       console.error("Upload failed:", err);
+      setUploadError("Upload failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -166,9 +172,12 @@ export default function AdminGalleryPage() {
       )}
 
       {/* Upload Modal */}
-      <Modal isOpen={uploadOpen} onClose={() => setUploadOpen(false)} title="Upload Image" size="md">
+      <Modal isOpen={uploadOpen} onClose={() => { setUploadOpen(false); setUploadError(""); }} title="Upload Image" size="md">
         <div className="space-y-4">
-          <ImageUpload onChange={(f) => setNewFile(f)} />
+          <div>
+            <ImageUpload onChange={(f) => { setNewFile(f); setUploadError(""); }} />
+            {uploadError && <p className="text-red-500 text-xs mt-1.5">{uploadError}</p>}
+          </div>
           <Input
             label="Caption"
             icon="ri-text"

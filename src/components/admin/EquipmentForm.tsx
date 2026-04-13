@@ -21,9 +21,28 @@ export default function EquipmentForm({ equipment, onSubmit, loading }: Equipmen
     category: equipment?.category || CATEGORIES[0],
   });
   const [file, setFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim()) newErrors.name = "Name is required.";
+    if (!form.description.trim()) newErrors.description = "Description is required.";
+    if (!equipment && !file) newErrors.image = "Image is required for new equipment.";
+    return newErrors;
+  };
+
+  const clearError = (field: string) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     await onSubmit({
       ...form,
       imageUrl: equipment?.imageUrl || "",
@@ -39,8 +58,8 @@ export default function EquipmentForm({ equipment, onSubmit, loading }: Equipmen
         icon="ri-settings-3-line"
         placeholder="Equipment name"
         value={form.name}
-        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-        required
+        error={errors.name}
+        onChange={(e) => { setForm((p) => ({ ...p, name: e.target.value })); clearError("name"); }}
       />
       <div>
         <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
@@ -49,11 +68,11 @@ export default function EquipmentForm({ equipment, onSubmit, loading }: Equipmen
         <textarea
           placeholder="Short description..."
           value={form.description}
-          onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+          onChange={(e) => { setForm((p) => ({ ...p, description: e.target.value })); clearError("description"); }}
           rows={3}
-          className="auth-input w-full resize-none"
-          required
+          className={`auth-input w-full resize-none ${errors.description ? "!border-red-500" : ""}`}
         />
+        {errors.description && <p className="text-red-500 text-xs mt-1.5">{errors.description}</p>}
       </div>
       <div>
         <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
@@ -75,8 +94,9 @@ export default function EquipmentForm({ equipment, onSubmit, loading }: Equipmen
         </label>
         <ImageUpload
           value={equipment?.imageUrl}
-          onChange={(f) => setFile(f)}
+          onChange={(f) => { setFile(f); clearError("image"); }}
         />
+        {errors.image && <p className="text-red-500 text-xs mt-1.5">{errors.image}</p>}
       </div>
       <Button type="submit" variant="primary" fullWidth loading={loading}>
         {equipment ? "Update Equipment" : "Add Equipment"}

@@ -20,9 +20,30 @@ export default function TrainerForm({ trainer, onSubmit, loading }: TrainerFormP
     experience: trainer?.experience || "",
   });
   const [file, setFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim()) newErrors.name = "Name is required.";
+    if (!form.specialization.trim()) newErrors.specialization = "Specialization is required.";
+    if (!form.bio.trim()) newErrors.bio = "Bio is required.";
+    if (!form.experience.trim()) newErrors.experience = "Experience is required.";
+    if (!trainer && !file) newErrors.photo = "Photo is required for new trainers.";
+    return newErrors;
+  };
+
+  const clearError = (field: string) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     await onSubmit({
       ...form,
       photoUrl: trainer?.photoUrl || "",
@@ -38,16 +59,16 @@ export default function TrainerForm({ trainer, onSubmit, loading }: TrainerFormP
         icon="ri-user-line"
         placeholder="Trainer name"
         value={form.name}
-        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-        required
+        error={errors.name}
+        onChange={(e) => { setForm((p) => ({ ...p, name: e.target.value })); clearError("name"); }}
       />
       <Input
         label="Specialization"
         icon="ri-focus-3-line"
         placeholder="e.g. Strength Training"
         value={form.specialization}
-        onChange={(e) => setForm((p) => ({ ...p, specialization: e.target.value }))}
-        required
+        error={errors.specialization}
+        onChange={(e) => { setForm((p) => ({ ...p, specialization: e.target.value })); clearError("specialization"); }}
       />
       <div>
         <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
@@ -56,19 +77,19 @@ export default function TrainerForm({ trainer, onSubmit, loading }: TrainerFormP
         <textarea
           placeholder="Short biography..."
           value={form.bio}
-          onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
+          onChange={(e) => { setForm((p) => ({ ...p, bio: e.target.value })); clearError("bio"); }}
           rows={3}
-          className="auth-input w-full resize-none"
-          required
+          className={`auth-input w-full resize-none ${errors.bio ? "!border-red-500" : ""}`}
         />
+        {errors.bio && <p className="text-red-500 text-xs mt-1.5">{errors.bio}</p>}
       </div>
       <Input
         label="Experience"
         icon="ri-medal-line"
         placeholder="e.g. 8+ Years"
         value={form.experience}
-        onChange={(e) => setForm((p) => ({ ...p, experience: e.target.value }))}
-        required
+        error={errors.experience}
+        onChange={(e) => { setForm((p) => ({ ...p, experience: e.target.value })); clearError("experience"); }}
       />
       <div>
         <label className="block text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">
@@ -76,8 +97,9 @@ export default function TrainerForm({ trainer, onSubmit, loading }: TrainerFormP
         </label>
         <ImageUpload
           value={trainer?.photoUrl}
-          onChange={(f) => setFile(f)}
+          onChange={(f) => { setFile(f); clearError("photo"); }}
         />
+        {errors.photo && <p className="text-red-500 text-xs mt-1.5">{errors.photo}</p>}
       </div>
       <Button type="submit" variant="primary" fullWidth loading={loading}>
         {trainer ? "Update Trainer" : "Add Trainer"}

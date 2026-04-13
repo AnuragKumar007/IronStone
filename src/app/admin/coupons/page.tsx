@@ -39,6 +39,7 @@ export default function AdminCouponsPage() {
   const [form, setForm] = useState<CouponForm>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fetchCoupons = () => {
     setLoading(true);
@@ -52,9 +53,29 @@ export default function AdminCouponsPage() {
     fetchCoupons();
   }, []);
 
+  const generateCode = (): string => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
+
+  const generateUniqueCode = (): string => {
+    const existingCodes = new Set(coupons.map((c) => c.code.toUpperCase()));
+    let code = generateCode();
+    // Keep generating until unique
+    while (existingCodes.has(code.toUpperCase())) {
+      code = generateCode();
+    }
+    return code;
+  };
+
   const openCreate = () => {
     setEditingId(null);
     setForm(emptyForm);
+    setErrors({});
     setModalOpen(true);
   };
 
@@ -71,16 +92,46 @@ export default function AdminCouponsPage() {
         : "",
       isActive: coupon.isActive,
     });
+    setErrors({});
     setModalOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.code.trim() || !form.discountValue) return;
+    const newErrors: Record<string, string> = {};
+
+    if (!form.code.trim()) {
+      newErrors.code = "Coupon code is required.";
+    } else if (form.code.trim().length !== 6) {
+      newErrors.code = "Code must be exactly 6 characters.";
+    } else {
+      const codeUpper = form.code.toUpperCase().trim();
+      const duplicate = coupons.find(
+        (c) => c.code.toUpperCase() === codeUpper && c.id !== editingId
+      );
+      if (duplicate) {
+        newErrors.code = `Code "${codeUpper}" already exists.`;
+      }
+    }
+
+    if (!form.discountValue || Number(form.discountValue) <= 0) {
+      newErrors.discountValue = "Discount value is required.";
+    } else if (form.discountType === "percentage" && Number(form.discountValue) > 100) {
+      newErrors.discountValue = "Percentage cannot exceed 100.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    const codeUpper = form.code.toUpperCase().trim();
+
     setSaving(true);
 
     try {
       const data = {
-        code: form.code.toUpperCase().trim(),
+        code: codeUpper,
         discountType: form.discountType,
         discountValue: Number(form.discountValue),
         minPlanTier: Number(form.minPlanTier),
@@ -213,13 +264,29 @@ export default function AdminCouponsPage() {
         size="md"
       >
         <div className="space-y-5">
-          <Input
-            label="Coupon Code"
-            icon="ri-coupon-line"
-            placeholder="e.g. NEWYEAR25"
-            value={form.code}
-            onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-          />
+          <div>
+            <Input
+              label="Coupon Code (6 characters)"
+              icon="ri-coupon-line"
+              placeholder="e.g. Ab3xK9"
+              value={form.code}
+              maxLength={6}
+              error={errors.code}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^A-Za-z0-9]/g, "");
+                setForm({ ...form, code: val.slice(0, 6) });
+                if (errors.code) setErrors((prev) => ({ ...prev, code: "" }));
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, code: generateUniqueCode() })}
+              className="mt-2 text-xs font-semibold text-red-500 hover:text-red-400 transition-colors flex items-center gap-1"
+            >
+              <i className="ri-refresh-line"></i>
+              Generate Random Code
+            </button>
+          </div>
 
           {/* Discount Type */}
           <div>
@@ -256,7 +323,11 @@ export default function AdminCouponsPage() {
             icon="ri-discount-percent-line"
             placeholder={form.discountType === "percentage" ? "e.g. 25" : "e.g. 500"}
             value={form.discountValue}
-            onChange={(e) => setForm({ ...form, discountValue: e.target.value })}
+            error={errors.discountValue}
+            onChange={(e) => {
+              setForm({ ...form, discountValue: e.target.value });
+              if (errors.discountValue) setErrors((prev) => ({ ...prev, discountValue: "" }));
+            }}
           />
 
           {/* Min Plan Tier */}
