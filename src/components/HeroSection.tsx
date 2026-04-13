@@ -47,12 +47,12 @@ export default function HeroSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
             {/* Content Container */}
-            <div className="relative z-10 container mx-auto px-6 md:px-[8rem] flex flex-col items-start justify-center pt-24 text-white">
+            <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-20 flex flex-col items-start justify-center pt-24 pb-32 text-white h-full my-auto">
                 
                 {/* Motivational Subtitle */}
                 <h3 
                     ref={subtitleRef} 
-                    className="text-red-500 font-bold tracking-[0.2em] text-sm md:text-lg uppercase mb-4"
+                    className="text-red-500 font-bold tracking-[0.2em] text-xs sm:text-sm md:text-lg uppercase mb-3 md:mb-4"
                 >
                     Shape Your Body
                 </h3>
@@ -60,7 +60,7 @@ export default function HeroSection() {
                 {/* Main Heavy Typography */}
                 <h1 
                     ref={titleRef} 
-                    className="text-[4rem] md:text-[7rem] leading-[1.1] font-black uppercase tracking-tight mb-6"
+                    className="text-[3.5rem] sm:text-[4rem] md:text-[6rem] lg:text-[7rem] leading-[1] md:leading-[1.1] font-black uppercase tracking-tight mb-4 md:mb-6"
                 >
                     Be <span className="text-red-600">Strong</span><br />
                     Train Hard
@@ -69,7 +69,7 @@ export default function HeroSection() {
                 {/* Supporting Text */}
                 <p 
                     ref={textRef} 
-                    className="max-w-xl text-gray-300 text-lg md:text-xl font-light leading-relaxed mb-10"
+                    className="max-w-xs sm:max-w-md md:max-w-xl text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-light leading-relaxed mb-8 md:mb-10"
                 >
                     At IronStone, we believe that fitness is not just a destination; it's a journey towards a healthier, better life. We will develop a programme that will meet your individual needs.
                 </p>
@@ -77,7 +77,7 @@ export default function HeroSection() {
                 {/* Call to Action Button */}
                 <button 
                     ref={btnRef} 
-                    className="group relative px-10 py-5 bg-red-600 text-white font-bold text-lg uppercase tracking-wider overflow-hidden hover:bg-white hover:text-black transition-colors duration-300"
+                    className="group relative px-6 py-3 md:px-10 md:py-5 bg-red-600 text-white font-bold text-sm md:text-lg uppercase tracking-wider overflow-hidden hover:bg-white hover:text-black transition-colors duration-300 rounded-sm md:rounded-none"
                 >
                     <span className="relative z-10 flex items-center gap-2">
                         Get Info
@@ -89,7 +89,7 @@ export default function HeroSection() {
             </div>
             
             {/* Optional Side Decorators / Socials matching reference */}
-            <div className="hidden lg:flex absolute right-12 bottom-1/2 translate-y-1/2 flex-col gap-6 z-20">
+            <div className="hidden xl:flex absolute right-12 bottom-1/2 translate-y-1/2 flex-col gap-6 z-20">
                 <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 hover:bg-red-600 hover:border-red-600 transition-all text-white"><i className="ri-facebook-fill"></i></a>
                 <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 hover:bg-red-600 hover:border-red-600 transition-all text-white"><i className="ri-twitter-x-fill"></i></a>
                 <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 hover:bg-red-600 hover:border-red-600 transition-all text-white"><i className="ri-instagram-line"></i></a>
@@ -98,22 +98,22 @@ export default function HeroSection() {
 
             {/* Bottom Stat Tickers matching reference */}
             <div className="absolute bottom-0 left-0 w-full border-t border-white/10 bg-black/50 backdrop-blur-sm z-20">
-                 <div className="container mx-auto px-6 md:px-[8rem] py-6 flex flex-wrap justify-between items-center gap-6">
-                     <div className="text-center">
-                         <h4 className="text-red-600 text-3xl font-black">9+</h4>
-                         <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mt-1">Years Experience</p>
+                 <div className="container mx-auto px-6 md:px-12 lg:px-20 py-4 md:py-6 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 justify-between items-center text-center">
+                     <div>
+                         <h4 className="text-red-600 text-2xl md:text-3xl font-black">9+</h4>
+                         <p className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-wider mt-1">Years Experience</p>
                      </div>
-                     <div className="text-center">
-                         <h4 className="text-red-600 text-3xl font-black">8+</h4>
-                         <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mt-1">Expert Trainers</p>
+                     <div>
+                         <h4 className="text-red-600 text-2xl md:text-3xl font-black">8+</h4>
+                         <p className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-wider mt-1">Expert Trainers</p>
                      </div>
-                     <div className="text-center">
-                         <h4 className="text-red-600 text-3xl font-black">1500+</h4>
-                         <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mt-1">Happy Members</p>
+                     <div>
+                         <h4 className="text-red-600 text-2xl md:text-3xl font-black">1500+</h4>
+                         <p className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-wider mt-1">Happy Members</p>
                      </div>
-                     <div className="text-center">
-                         <h4 className="text-red-600 text-3xl font-black">95%</h4>
-                         <p className="text-gray-400 text-sm font-bold uppercase tracking-wider mt-1">Success Rate</p>
+                     <div>
+                         <h4 className="text-red-600 text-2xl md:text-3xl font-black">95%</h4>
+                         <p className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-wider mt-1">Success Rate</p>
                      </div>
                  </div>
             </div>

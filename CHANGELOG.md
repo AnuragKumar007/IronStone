@@ -168,3 +168,79 @@
 - **Phase 6 (Admin Panel):** Complete
 - **Trainer Pricing Feature:** Complete
 - **Coupon System:** Complete
+
+---
+
+## Day 3 — 2026-04-11 (Anurag)
+
+### Landing Page Responsiveness & UI Polishing
+- Rebuilt `HeroSection` typography using a fluid scaling syntax (`text-[3.5rem]` to `7rem`) to handle all portrait/landscape mobile sizes seamlessly
+- Fixed the stat bar overlap on Hero text by clamping bottom padding (`pb-32 h-full my-auto`)
+- Converted the Hero section bottom statistics panel into a rigid CSS grid (`grid-cols-2 md:grid-cols-4`) for a perfect 2x2 mobile display mapping without weird wrapping
+- Consolidated hardcoded padding into standard theme containers (`container mx-auto px-6 md:px-12`) across all addressed sections
+
+### Smooth Scrolling & Animation Fixes
+- Implemented dual-layer smooth scroll sync (`LenisScrollTriggerSync()`) in `SmoothScroll.tsx` to align React state and GSAP ticker synchrony, officially squashing the "black background on scroll down" rendering failure
+- Fixed GSAP memory leaks inside `WorkoutPlansSection` by encasing the scroll timeline in a deterministic `gsap.context()` block
+- Restored standard un-mounting teardown logic with `ctx.revert()` 
+- Added Math clamping against the Lottie player `goToAndStop(Math.min(..., 162))` to prevent breaking frame execution bounds mapping
+- Updated color theme variables to adhere strictly to `PROJECT_RULES.md` inside `WorkoutPlansSection`, purging invalid raw hex values
+
+### Mobile Navigation Overhaul
+- Migrated the mobile hamburger menu in `Navbar` from an awkward 280px side-drawer trick directly into a polished, sleek full-screen modal overlay matching the reference theme
+- Instantly eliminated sluggish CSS transitions driving the mobile menu wrapper swapping them for immediate DOM block `flex/hidden` structural logic (giving instant visual tap feedback)
+- Hard-injected the primary `IronStone` brand logo directly inside the expanded full-screen menu overlay's header alongside the close-out button
+- Scaled up typography inside the menu layout substantially spanning down mobile screen height correctly (`text-lg md:text-xl`)
+- Removed accidental horizontal scrollbars and text bleeding on iOS/Mobile by affixing strong `overflow-x-hidden` policies to `<body/>` element strings and `<main>` borders
+
+### Navbar Hide-on-Scroll & Hamburger Fix
+- Implemented hide-on-scroll behavior: navbar slides up (`translateY(-100%)`) when scrolling down past 80px, and returns on any scroll up.
+- Fixed hamburger accessibility issue: extracted the hamburger button out of the scroll-hiding navbar wrapper into its own independent `fixed` element (`z-[110]`) so it remains always visible on mobile even when the navbar is hidden.
+- The floating hamburger automatically hides when the full-screen mobile menu is open (X button inside the overlay replaces it).
+- Does not interfere with desktop layout (hidden via `lg:hidden`).
+- Renamed `FloatingImagesSection.tsx` to `WorkoutWithSection.tsx` for cleaner abstraction.
+- Fixed the background red gradient glowing effect positioning on smaller viewports (`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2` map).
+- Refined the red glow intensity on mobile: reduced the physical size of the blobs, dropped blur to `80px`, and lowered opacity to perfectly match the aesthetic contrast ratio of the laptop view.
+- Adjusted the overall height bounding so it stays globally fixed at `min-h-[100vh]` across both mobile and desktop screens as requested.
+- Switched hardcoded color values to global Tailwind variables matching the central theme.
+- Fixed floating parallax layout on mobile elements logic by binding coordinates natively rather than static boxes.
+- Added deterministic `gsap.context()` closure for flawless teardowns matching previous phase rules.
+
+### Navbar UI Tweaks
+- Removed social media icons from the desktop navbar (they remain inside the mobile hamburger menu drawer).
+- Updated the desktop auth button label from "Login" to "Login / Signup" for clearer UX.
+
+### Define Goals Section Responsiveness
+- Traced the actual root cause of oversized text: the global `.text-area` CSS class in `globals.css` had a hardcoded `font-size: 10rem` which overrode all Tailwind responsive classes on the component.
+- Fixed by replacing the static font-size with `12vw` for mobile viewport and adding `@media` breakpoints (`768px → 5rem`, `1024px → 7rem`) to restore full desktop sizing.
+- Removed the now-redundant Tailwind font-size classes from the component since `globals.css` now handles responsiveness natively.
+
+### Reviews Section Rebuild
+- Completely rebuilt `ReviewsCarousel.tsx` from the ground up, replacing the broken 3D perspective carousel with a clean, responsive card grid layout.
+- Designed the `Review` interface to mirror the Google Places API review object (`author_name`, `profile_photo_url`, `rating`, `relative_time_description`, `text`) for seamless future integration with real Google Reviews.
+- Added 6 realistic mock reviews with Indian names and gym-specific content.
+- Built a Google Rating Summary bar at the top showing the aggregate score, star visualization, and review count.
+- Cards use `bg-surface-100 border-zinc-800 rounded-3xl` per PROJECT_RULES. Hover state follows `hover:border-zinc-700` rule.
+- Avatar falls back to a red initials circle when no `profile_photo_url` is provided (matching future API behavior).
+- Each card displays a Google icon to visually indicate review source.
+- GSAP staggered scroll-triggered entrance animation wrapped in `gsap.context()` for safe cleanup.
+- Responsive grid: 1 col mobile, 2 col tablet, 3 col desktop with `gap-6 md:gap-8`.
+- "View All Reviews" / "Show Less" toggle button with theme-consistent outline styling.
+- Removed all external stock photo URLs and lorem ipsum placeholder text.
+
+### Files Modified
+- `src/app/page.tsx` — Updated component import maps.
+- `src/components/WorkoutWithSection.tsx` — Overhauled component sizing parameters and background centering.
+- `src/components/DefineGoalsSection.tsx` — Fixed font rendering constraints scaling typography via viewport constraints on smaller devices.
+- `src/components/ReviewsCarousel.tsx` — Full rebuild with Google Reviews-ready data structure and responsive card grid.
+
+### Status
+- **Phase 1 (Foundation & Auth):** Complete
+- **Phase 2 (Design System & Components):** Complete
+- **Phase 3 (Content Pages):** Complete (contact API route pending)
+- **Phase 4 (Payments & Membership):** Skipped for now
+- **Phase 5 (Email Notifications):** Skipped for now
+- **Phase 6 (Admin Panel):** Complete
+- **Trainer Pricing Feature:** Complete
+- **Coupon System:** Complete
+- **Landing Page Responsiveness:** In Progress

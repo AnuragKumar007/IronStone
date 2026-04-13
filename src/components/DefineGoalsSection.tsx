@@ -49,8 +49,8 @@ export default function DefineGoalsSection() {
     }, []);
 
     return (
-        <div ref={sectionRef} className="flex justify-center items-center h-[30rem] mt-[-10vh] md:mt-[0vh] bg-transparent z-0 relative">
-            <div ref={textAreaRef} className="text-area flex flex-wrap justify-center gap-x-4 md:gap-x-12 px-4 text-[3rem] md:text-[5rem] lg:text-[7rem] font-bold">
+        <div ref={sectionRef} className="flex justify-center items-center py-16 md:py-24 min-h-[50vh] md:h-[30rem] mt-[-10vh] md:mt-[0vh] bg-transparent z-0 relative overflow-hidden">
+            <div ref={textAreaRef} className="text-area flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-x-4 lg:gap-x-12 px-6 text-[5rem] sm:text-[4rem] md:text-[5rem] lg:text-[7rem] leading-tight font-bold text-center w-full">
                 <div className="flex">
                     {word1.map((char, i) => (
                         <span key={`w1-${i}`} className="goal-char">
