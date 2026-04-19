@@ -329,3 +329,45 @@
 - **Trainer Pricing Feature:** Complete
 - **Coupon System:** Complete
 - **Landing Page Responsiveness:** In Progress
+
+---
+
+## Day 5 — 2026-04-19
+
+### Navbar — Mobile Logout Button
+- Added logout button to mobile hamburger menu drawer (was missing — only desktop had it)
+- Follows existing mobile menu styling: `text-gray-400 hover:text-red-500`, RemixIcon (`ri-logout-box-r-line`)
+- Appears below Profile link when user is logged in
+- Reduced header margin from `mb-12` to `mb-6 md:mb-12` to improve scrollability on short screens
+
+### Contact Messages — Admin Dashboard
+- Contact form now saves messages to Firestore `messages` collection instead of faking success with `setTimeout`
+- Added Firestore helpers: `addContactMessage`, `getContactMessages`, `updateContactMessage`, `deleteContactMessage`
+- Created admin messages page (`/admin/messages`) with DataTable listing all submissions
+- Message detail modal shows full sender info (name, email, phone, date) and message body
+- Auto-marks messages as read when opened in modal
+- Toggle read/unread status from actions column
+- Delete messages with inline confirmation
+- Unread count badge shown in page header
+- Added "Messages" nav link to admin sidebar with `ri-mail-line` icon
+
+### Files Created
+- `src/app/admin/messages/page.tsx` — admin messages management page
+
+### Files Modified
+- `src/components/shared/Navbar.tsx` — mobile logout button + responsive header margin
+- `src/lib/firestore.ts` — contact message CRUD functions + `ContactMessage` type import
+- `src/app/(public)/contact/page.tsx` — wired form to Firestore via `addContactMessage`
+- `src/components/admin/AdminSidebar.tsx` — added Messages nav link
+
+### Status
+- **Phase 1 (Foundation & Auth):** Complete
+- **Phase 2 (Design System & Components):** Complete
+- **Phase 3 (Content Pages):** Complete
+- **Phase 4 (Payments & Membership):** Skipped for now
+- **Phase 5 (Email Notifications):** Skipped for now
+- **Phase 6 (Admin Panel):** Complete
+- **Trainer Pricing Feature:** Complete
+- **Coupon System:** Complete
+- **Contact Messages System:** Complete
+- **Landing Page Responsiveness:** In Progress

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
 import PageHero from "@/components/PageHero";
 import { Input, Button } from "@/components/ui";
+import { addContactMessage } from "@/lib/firestore";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -43,9 +44,14 @@ export default function ContactPage() {
     }
 
     try {
-      // TODO: Wire to POST /api/contact when API route is built
-      // For now, simulate success
-      await new Promise((r) => setTimeout(r, 1000));
+      await addContactMessage({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        message: form.message,
+        createdAt: new Date(),
+        read: false,
+      });
       setSuccess(true);
       setForm({ name: "", email: "", phone: "", message: "" });
     } catch {
