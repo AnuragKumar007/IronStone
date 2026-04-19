@@ -167,7 +167,7 @@ export default function Navbar() {
             ${mobileOpen ? "flex" : "hidden"}`}
         >
           {/* Header inside Menu */}
-          <div className="flex items-center justify-between z-50 relative w-full mb-12">
+          <div className="flex items-center justify-between z-50 relative w-full mb-6 md:mb-12">
             <Link href="/" className="text-white flex items-center gap-3 shrink-0" onClick={() => setMobileOpen(false)}>
               <img
                 src="/logo-light.png"
@@ -219,13 +219,22 @@ export default function Navbar() {
             {!loading && (
               <>
                 {user ? (
-                  <Link
-                    href="/profile"
-                    className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-gray-400 hover:text-white"
-                  >
-                    <i className="ri-user-line mr-3"></i>
-                    Profile
-                  </Link>
+                  <>
+                    <Link
+                      href="/profile"
+                      className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-gray-400 hover:text-white"
+                    >
+                      <i className="ri-user-line mr-3"></i>
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block py-3 text-lg md:text-xl font-bold uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <i className="ri-logout-box-r-line mr-3"></i>
+                      Logout
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link

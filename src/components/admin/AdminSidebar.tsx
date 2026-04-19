@@ -16,6 +16,7 @@ const navItems = [
   { label: "Trainers", href: "/admin/trainers", icon: "ri-team-line" },
   { label: "Equipment", href: "/admin/equipment", icon: "ri-boxing-line" },
   { label: "Gallery", href: "/admin/gallery", icon: "ri-image-line" },
+  { label: "Messages", href: "/admin/messages", icon: "ri-mail-line" },
 ];
 
 export default function AdminSidebar() {

@@ -7,7 +7,7 @@ import {
   getDoc, setDoc, limit, serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import type { UserData, Trainer, Equipment, GalleryImage, PricingPlan, PricingSettings, Coupon } from "@/types";
+import type { UserData, Trainer, Equipment, GalleryImage, PricingPlan, PricingSettings, Coupon, ContactMessage } from "@/types";
 
 export async function getTrainers(): Promise<Trainer[]> {
   const q = query(collection(db, "trainers"), orderBy("order", "asc"));
@@ -229,4 +229,47 @@ export async function updateCoupon(id: string, data: Partial<Coupon>): Promise<v
 
 export async function deleteCoupon(id: string): Promise<void> {
   await deleteDoc(doc(db, "coupons", id));
+}
+
+// ============================================
+// Admin — Contact Messages
+// ============================================
+export async function getContactMessages(): Promise<ContactMessage[]> {
+  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      message: data.message,
+      read: data.read ?? false,
+      createdAt: data.createdAt?.toDate() || new Date(),
+    } as ContactMessage;
+  });
+}
+
+export async function addContactMessage(data: Omit<ContactMessage, "id">): Promise<string> {
+  const ref = await addDoc(collection(db, "messages"), {
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    message: data.message,
+    read: false,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateContactMessage(id: string, data: Partial<ContactMessage>): Promise<void> {
+  const { id: _, createdAt: __, ...rest } = data as ContactMessage & { id?: string };
+  void _;
+  void __;
+  await updateDoc(doc(db, "messages", id), rest);
+}
+
+export async function deleteContactMessage(id: string): Promise<void> {
+  await deleteDoc(doc(db, "messages", id));
 }
